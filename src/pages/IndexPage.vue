@@ -59,6 +59,17 @@ export default defineComponent({
     const cipher3 = Int32Array.from(easyFHE.Cipher.add(cipher1, cipher2));
     const result = easyFHE.decrypt(cipher3, secretKey);
     console.log(result);
+    easyFHE.Setup.fastSetup('ckks', 'tc128', 'normal');
+    const [publicKey2, secretKey2] = easyFHE.generateKeys();
+    const dataset12: Float64Array = Float64Array.from([
+      0.3, 0.4, 0.5, 0.6, 0.7,
+    ]);
+    const dataset22: Float64Array = Float64Array.from([1, 2, 1.5, 3.2, 4]);
+    const cipher12 = Float64Array.from(easyFHE.encrypt(dataset12, publicKey2));
+    const cipher22 = Float64Array.from(easyFHE.encrypt(dataset22, publicKey2));
+    const cipher32 = Float64Array.from(easyFHE.Cipher.add(cipher12, cipher22));
+    const result2 = easyFHE.decrypt(cipher32, secretKey2);
+    console.log(result2);
   },
 });
 </script>
