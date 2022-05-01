@@ -13,7 +13,7 @@
 import { Todo, Meta } from 'components/models';
 import ExampleComponent from 'components/ExampleComponent.vue';
 import { defineComponent, ref } from 'vue';
-import getFheModule from 'easyFHE';
+import getFheModule, { ProcessingSpeed, Scheme, Security } from 'easyFHE';
 
 export default defineComponent({
   name: 'IndexPage',
@@ -49,26 +49,31 @@ export default defineComponent({
   async mounted() {
     const easyFHE = await getFheModule();
     await easyFHE.initialize();
-    easyFHE.Setup.fastSetup('bfv', 'tc128', 'normal');
+    easyFHE.Setup.fastSetup(Scheme.BFV, Security.TC128, ProcessingSpeed.NORMAL);
 
-    const [publicKey, secretKey] = easyFHE.generateKeys();
-    const dataset1: Int32Array = Int32Array.from([1, 2, 3, 4, 5, 6, 7]);
-    const dataset2: Int32Array = Int32Array.from([12, 22, 32, 42, 52, 62, 72]);
-    const cipher1 = Int32Array.from(easyFHE.encrypt(dataset1, publicKey));
-    const cipher2 = Int32Array.from(easyFHE.encrypt(dataset2, publicKey));
-    const cipher3 = Int32Array.from(easyFHE.Cipher.add(cipher1, cipher2));
-    const result = easyFHE.decrypt(cipher3, secretKey);
-    console.log(result);
-    easyFHE.Setup.fastSetup('ckks', 'tc128', 'normal');
+    // const [publicKey, secretKey] = easyFHE.generateKeys();
+    // const dataset1: Int32Array = Int32Array.from([1, 2, 3, 4, 5, 6, 7]);
+    // const dataset2: Int32Array = Int32Array.from([12, 22, 32, 42, 52, 62, 72]);
+    // const cipher1 = easyFHE.encrypt(dataset1, publicKey);
+    // const cipher2 = easyFHE.encrypt(dataset2, publicKey);
+    // const cipher3 = easyFHE.Cipher.add(cipher1.save(), cipher2.save());
+    // const result = easyFHE.decrypt(cipher3.save(), secretKey);
+    // console.log(result);
+
+    easyFHE.Setup.fastSetup(
+      Scheme.CKKS,
+      Security.TC128,
+      ProcessingSpeed.NORMAL
+    );
     const [publicKey2, secretKey2] = easyFHE.generateKeys();
     const dataset12: Float64Array = Float64Array.from([
       0.3, 0.4, 0.5, 0.6, 0.7,
     ]);
     const dataset22: Float64Array = Float64Array.from([1, 2, 1.5, 3.2, 4]);
-    const cipher12 = Float64Array.from(easyFHE.encrypt(dataset12, publicKey2));
-    const cipher22 = Float64Array.from(easyFHE.encrypt(dataset22, publicKey2));
-    const cipher32 = Float64Array.from(easyFHE.Cipher.add(cipher12, cipher22));
-    const result2 = easyFHE.decrypt(cipher32, secretKey2);
+    const cipher12 = easyFHE.encrypt(dataset12, publicKey2);
+    const cipher22 = easyFHE.encrypt(dataset22, publicKey2);
+    const cipher32 = easyFHE.Cipher.add(cipher12.save(), cipher22.save());
+    const result2 = easyFHE.decrypt(cipher32.save(), secretKey2);
     console.log(result2);
   },
 });
