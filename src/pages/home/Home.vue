@@ -1,5 +1,33 @@
 <template>
-  <q-page class="row items-center justify-evenly"> Home </q-page>
+  <q-page class="row items-center justify-evenly">
+    Home
+    <q-btn
+      class="q-ma-xl"
+      color="primary"
+      label="Show / Hide"
+      v-on:click="show = !show"
+    />
+    <!-- Now obviously not like this : ) but how ? -->
+    <transition
+      appear
+      enter-active-class="animated bounceInDown"
+      leave-active-class="animated flipOutY"
+      :duration="1000"
+    >
+      <q-card
+        v-show="show"
+        style="
+          position: absolute;
+          top: 100px;
+          left: 100px;
+          background-color: Salmon;
+          width: 200px;
+          height: 200px;
+        "
+        >Hello</q-card
+      >
+    </transition>
+  </q-page>
 </template>
 
 <script lang="ts">
@@ -37,7 +65,12 @@ export default defineComponent({
     const meta = ref<Meta>({
       totalCount: 1200,
     });
-    return { todos, meta };
+    return { todos, meta, visible: ref(false), show: ref(false) };
+  },
+  methods: {
+    hide() {
+      this.visible = !this.visible;
+    },
   },
   async mounted() {
     const easyFHE = await getFheModule();
