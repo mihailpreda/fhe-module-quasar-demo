@@ -1,71 +1,23 @@
 <template>
   <q-page class="row items-center justify-evenly">
     Home
-    <q-btn
-      class="q-ma-xl"
-      color="primary"
-      label="Show / Hide"
-      v-on:click="show = !show"
-    />
-    <!-- Now obviously not like this : ) but how ? -->
-    <transition
-      appear
-      enter-active-class="animated bounceInDown"
-      leave-active-class="animated flipOutY"
-      :duration="1000"
-    >
-      <q-card
-        v-show="show"
-        style="
-          position: absolute;
-          top: 100px;
-          left: 100px;
-          background-color: Salmon;
-          width: 200px;
-          height: 200px;
-        "
-        >Hello</q-card
-      >
-    </transition>
+    <button @click="show = !show">Toggle</button>
+    <Transition :duration="550" name="nested">
+      <div v-if="show" class="outer">
+        <div class="inner">Hello</div>
+      </div>
+    </Transition>
   </q-page>
 </template>
 
 <script lang="ts">
-import { Todo, Meta } from 'components/models';
-
 import { defineComponent, ref } from 'vue';
-import getFheModule, { ProcessingSpeed, Scheme, Security } from 'easyFHE';
-
+import getFheModule, { EasySpeed, EasyScheme, EasySecurity } from 'easyFHE';
 export default defineComponent({
   name: 'Home',
   components: {},
   setup() {
-    const todos = ref<Todo[]>([
-      {
-        id: 1,
-        content: 'ct1',
-      },
-      {
-        id: 2,
-        content: 'ct2',
-      },
-      {
-        id: 3,
-        content: 'ct3',
-      },
-      {
-        id: 4,
-        content: 'ct4',
-      },
-      {
-        id: 5,
-        content: 'ct5',
-      },
-    ]);
-    const meta = ref<Meta>({
-      totalCount: 1200,
-    });
-    return { todos, meta, visible: ref(false), show: ref(false) };
+    return { visible: ref(false), show: ref(false) };
   },
   methods: {
     hide() {
@@ -75,7 +27,11 @@ export default defineComponent({
   async mounted() {
     const easyFHE = await getFheModule();
     await easyFHE.Setup.initialize();
-    easyFHE.Setup.fastSetup(Scheme.BFV, Security.TC128, ProcessingSpeed.NORMAL);
+    easyFHE.Setup.fastSetup(
+      EasyScheme.BFV,
+      EasySecurity.TC128,
+      EasySpeed.NORMAL
+    );
 
     const [publicKey_i32, secretKey_i32] = easyFHE.generateKeys();
     const data1_i32: Int32Array = Int32Array.from([1, 2, 3, 4, 5, 6, 7]);
@@ -98,9 +54,9 @@ export default defineComponent({
     console.log('u32', result_u32);
 
     easyFHE.Setup.fastSetup(
-      Scheme.CKKS,
-      Security.TC128,
-      ProcessingSpeed.NORMAL
+      EasyScheme.CKKS,
+      EasySecurity.TC128,
+      EasySpeed.NORMAL
     );
 
     const [publicKey_f64, secretKey_f64] = easyFHE.generateKeys();
@@ -118,3 +74,51 @@ export default defineComponent({
   },
 });
 </script>
+<style lang="scss" scoped>
+.outer,
+.inner {
+  background: #eee;
+  padding: 30px;
+  min-height: 100px;
+}
+
+.inner {
+  background: #ccc;
+}
+
+.nested-enter-active,
+.nested-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+/* delay leave of parent element */
+.nested-leave-active {
+  transition-delay: 0.25s;
+}
+
+.nested-enter-from,
+.nested-leave-to {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+/* we can also transition nested elements using nested selectors */
+.nested-enter-active .inner,
+.nested-leave-active .inner {
+  transition: all 0.3s ease-in-out;
+}
+/* delay enter of nested element */
+.nested-enter-active .inner {
+  transition-delay: 0.25s;
+}
+
+.nested-enter-from .inner,
+.nested-leave-to .inner {
+  transform: translateX(30px);
+  /*
+  	Hack around a Chrome 96 bug in handling nested opacity transitions.
+    This is not needed in other browsers or Chrome 99+ where the bug
+    has been fixed.
+  */
+  opacity: 0.001;
+}
+</style>

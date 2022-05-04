@@ -15,7 +15,7 @@
                 <q-icon color="white" name="mdi-shield-lock"></q-icon>
               </q-item-section>
               <q-item-section
-                >Security: {{ scheme.security.label }}</q-item-section
+                >EasySecurity: {{ scheme.security.label }}</q-item-section
               >
             </q-item>
 
@@ -27,12 +27,12 @@
                 >Processing speed: {{ scheme.speed.label }}</q-item-section
               >
             </q-item>
-            <q-item v-if="scheme.scheme.value === Scheme.CKKS">
+            <q-item v-if="scheme.scheme.value === EasyScheme.CKKS">
               <q-item-section class="icon-avatar" avatar>
                 <q-icon color="white" name="mdi-chevron-double-up"></q-icon>
               </q-item-section>
               <q-item-section
-                >Precision: {{ scheme.precision.label }}</q-item-section
+                >EasyPrecision: {{ scheme.precision.label }}</q-item-section
               >
             </q-item>
           </q-list>
@@ -40,10 +40,11 @@
       </q-card-section>
 
       <q-card-section style="max-height: 40vh" class="scroll">
-        <Operation
+        <OperationBuilder
           v-for="(operation, index) in scheme!.operations"
           :key="index"
-          :operation="operation"
+          :scheme="scheme"
+          @addOperation="addOperationToScheme(scheme, $event)"
         />
       </q-card-section>
 
@@ -60,19 +61,20 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import getFheModule, {
-  Precision,
-  ProcessingSpeed,
-  Scheme,
-  Security,
+  EasyPrecision,
+  EasySpeed,
+  EasyScheme,
+  EasySecurity,
 } from 'easyFHE';
+
 // import { usePlaygroundStore } from 'src/stores/playground';
-import { HomomorphicScheme } from 'src/types/models';
-import Operation from './Operation.vue';
+import { HomomorphicScheme, Operation } from 'src/types/models';
+import OperationBuilder from './OperationBuilder.vue';
 import { usePlaygroundStore } from 'src/stores/playground';
 import { storeToRefs } from 'pinia';
 export default defineComponent({
-  name: 'Scheme',
-  components: { Operation },
+  name: 'SchemeBuilder',
+  components: { OperationBuilder },
   emits: ['addOperation'],
   props: {
     scheme: {
@@ -84,11 +86,14 @@ export default defineComponent({
     const playgroundStore = usePlaygroundStore();
     const { homomorphicSchemes } = storeToRefs(playgroundStore);
     return {
-      Scheme,
+      EasyScheme,
       homomorphicSchemes,
     };
   },
   methods: {
+    addOperationToScheme(scheme: HomomorphicScheme, operation: Operation) {
+      scheme.operations.push(operation);
+    },
     addOperation() {
       //
       this.$emit('addOperation', {
@@ -102,10 +107,10 @@ export default defineComponent({
     const easyFHE = await getFheModule();
     await easyFHE.Setup.initialize();
     easyFHE.Setup.fastSetup(
-      Scheme.BFV,
-      Security.TC128,
-      ProcessingSpeed.NORMAL,
-      Precision.HIGH
+      EasyScheme.BFV,
+      EasySecurity.TC128,
+      EasySpeed.NORMAL,
+      EasyPrecision.HIGH
     );
 
     const [publicKey_i32, secretKey_i32] = easyFHE.generateKeys();

@@ -1,29 +1,29 @@
-import { Scheme, Security, ProcessingSpeed, Precision } from 'easyFHE';
+import { EasyScheme, EasySecurity, EasySpeed, EasyPrecision } from 'easyFHE';
 import { Operation } from './Operation';
 interface DetailedScheme {
   label: string;
-  value: Scheme;
+  value: EasyScheme;
   fullName: string;
   description: string;
   icon: string;
 }
 interface DetailedSpeed {
   label: string;
-  value: ProcessingSpeed;
+  value: EasySpeed;
   fullName: string;
   description: string;
   icon: string;
 }
 interface DetailedSecurity {
   label: string;
-  value: Security;
+  value: EasySecurity;
   fullName: string;
   description: string;
   icon: string;
 }
 interface DetailedPrecision {
   label: string;
-  value: Precision;
+  value: EasyPrecision;
   fullName: string;
   description: string;
   icon: string;
