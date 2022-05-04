@@ -29,6 +29,7 @@ interface DetailedPrecision {
   icon: string;
 }
 export interface HomomorphicScheme {
+  schemeID: number;
   scheme: DetailedScheme;
   security: DetailedSecurity;
   speed: DetailedSpeed;

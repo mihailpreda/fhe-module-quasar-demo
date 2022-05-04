@@ -140,7 +140,8 @@ export default defineComponent({
   components: {},
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { homomorphicSchemes, openDialog } = storeToRefs(playgroundStore);
+    const { homomorphicSchemes, openDialog, schemeID } =
+      storeToRefs(playgroundStore);
     const schemes = [
       {
         label: 'BFV',
@@ -241,12 +242,14 @@ export default defineComponent({
       },
     ];
     const newScheme: Ref<HomomorphicScheme> = ref({
+      schemeID: schemeID.value,
       scheme: schemes[0],
       security: securities[0],
       speed: speeds[0],
       precision: precisions[0],
       operations: [],
     });
+    playgroundStore.schemeID += 1;
     return {
       schemes,
       securities,

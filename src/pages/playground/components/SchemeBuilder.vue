@@ -66,6 +66,9 @@
         <q-btn flat icon="mdi-file-compare" @click="compareCode"
           >Compare Code</q-btn
         >
+        <q-btn flat icon="mdi-delete" @click="removeScheme"
+          >Delete Scheme</q-btn
+        >
       </q-card-actions>
       <q-inner-loading
         :showing="loadingModule"
@@ -96,7 +99,7 @@ import { storeToRefs } from 'pinia';
 export default defineComponent({
   name: 'SchemeBuilder',
   components: { OperationBuilder },
-  emits: ['addOperation'],
+  emits: ['addOperation', 'removeScheme'],
   props: {
     scheme: {
       type: Object as PropType<HomomorphicScheme>,
@@ -128,6 +131,12 @@ export default defineComponent({
       );
       scheme.operations[index] = operation;
     },
+    removeScheme() {
+      this.$emit('removeScheme', this.scheme);
+      this.publicKey.delete();
+      this.secretKey.delete();
+      this.easyFHE.deallocateLibrary();
+    },
     addOperation() {
       //
       this.$emit('addOperation', {
@@ -152,6 +161,11 @@ export default defineComponent({
     const [p, s] = this.easyFHE.generateKeys();
     this.publicKey = markRaw(p);
     this.secretKey = markRaw(s);
+  },
+  beforeUnmount() {
+    this.publicKey.delete();
+    this.secretKey.delete();
+    this.easyFHE.deallocateLibrary();
   },
 });
 </script>

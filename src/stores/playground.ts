@@ -7,9 +7,11 @@ const storeID = 'playground';
 interface PlaygroundStoreState {
   homomorphicSchemes: HomomorphicScheme[];
   openDialog: boolean;
+  schemeID: number;
 }
 
 const PlaygroundStoreState: PlaygroundStoreState = {
+  schemeID: 0,
   homomorphicSchemes: [],
   openDialog: false,
 };

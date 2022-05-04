@@ -11,9 +11,9 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-toolbar-title> EasyFHE Library </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>EasyFHE v0.8.2</div>
       </q-toolbar>
     </q-header>
 

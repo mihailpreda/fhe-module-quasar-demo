@@ -17,6 +17,7 @@
       :key="index"
       :scheme="scheme"
       @addOperation="addOperationToScheme(scheme, $event)"
+      @removeScheme="removeSchemeFromPlayground(scheme)"
     />
   </q-page>
 </template>
@@ -43,9 +44,18 @@ export default defineComponent({
     };
   },
   methods: {
+    removeSchemeFromPlayground(scheme: HomomorphicScheme) {
+      //
+
+      this.homomorphicSchemes = this.homomorphicSchemes.filter(
+        (e: HomomorphicScheme) => e.schemeID != scheme.schemeID
+      );
+      console.log(this.homomorphicSchemes);
+    },
     addOperationToScheme(scheme: HomomorphicScheme, operation: Operation) {
       scheme.operations.push(operation);
     },
+
     openAddDialog() {
       this.openDialog = true;
     },
