@@ -12,6 +12,7 @@
 
     <AddScheme v-if="openDialog" class="new-operation" />
     <SchemeBuilder
+      :style="{ height: '680px', width: '1016px', minWidth: '1015px' }"
       v-for="(scheme, index) in homomorphicSchemes"
       :key="index"
       :scheme="scheme"

@@ -1,7 +1,8 @@
+import { ValueType } from './ValueType';
+
 export interface Operation {
-  leftHandSide: { value: number; isEncrypted: boolean };
-  rightHandSide: { value: number; isEncrypted: boolean };
+  leftSide: { value: string; type: ValueType };
+  rightSide: { value: string; type: ValueType };
   operator: string;
-  equal: string;
-  result: number;
+  result: string;
 }

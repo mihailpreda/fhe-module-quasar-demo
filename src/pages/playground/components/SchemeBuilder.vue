@@ -39,12 +39,23 @@
         </div>
       </q-card-section>
 
-      <q-card-section style="max-height: 40vh" class="scroll">
+      <q-card-section
+        class="scroll"
+        :style="{
+          height: '680px',
+          width: '1016px',
+          minWidth: '1015px',
+          maxHeight: '430px',
+        }"
+      >
         <OperationBuilder
           v-for="(operation, index) in scheme!.operations"
           :key="index"
           :scheme="scheme"
-          @addOperation="addOperationToScheme(scheme, $event)"
+          :easyFHE="easyFHE"
+          :publicKey="publicKey"
+          :secretKey="secretKey"
+          @updateOperation="updateOperationFromCurrentScheme(scheme, $event)"
         />
       </q-card-section>
 
@@ -52,22 +63,32 @@
 
       <q-card-actions>
         <q-btn flat @click="addOperation" icon="add">Add Operation</q-btn>
-        <q-btn flat icon="mdi-file-compare">Compare Code</q-btn>
+        <q-btn flat icon="mdi-file-compare" @click="compareCode"
+          >Compare Code</q-btn
+        >
       </q-card-actions>
+      <q-inner-loading
+        :showing="loadingModule"
+        :label-style="{ fontSize: '1.5rem', color: '#1976D2' }"
+      >
+        <q-spinner-gears size="50px" color="blue-10"></q-spinner-gears>
+        <span :style="{ fontSize: '1.5rem', color: '#1976D2' }">
+          Initializing module....
+        </span>
+      </q-inner-loading>
     </q-card>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, markRaw, PropType, ref } from 'vue';
 import getFheModule, {
-  EasyPrecision,
-  EasySpeed,
+  EasyPublicKey,
   EasyScheme,
-  EasySecurity,
+  EasySecretKey,
+  FHEModule,
 } from 'easyFHE';
 
-// import { usePlaygroundStore } from 'src/stores/playground';
 import { HomomorphicScheme, Operation } from 'src/types/models';
 import OperationBuilder from './OperationBuilder.vue';
 import { usePlaygroundStore } from 'src/stores/playground';
@@ -88,46 +109,57 @@ export default defineComponent({
     return {
       EasyScheme,
       homomorphicSchemes,
+      loadingModule: ref(false),
+      easyFHE: ref(null) as unknown as FHEModule,
+      publicKey: ref(null) as unknown as EasyPublicKey,
+      secretKey: ref(null) as unknown as EasySecretKey,
     };
   },
   methods: {
-    addOperationToScheme(scheme: HomomorphicScheme, operation: Operation) {
-      scheme.operations.push(operation);
+    compareCode() {
+      console.log(this.scheme);
+    },
+    updateOperationFromCurrentScheme(
+      scheme: HomomorphicScheme,
+      operation: Operation
+    ) {
+      const index = scheme.operations.findIndex(
+        (e: Operation) => e.operator == 'updateOperation'
+      );
+      scheme.operations[index] = operation;
     },
     addOperation() {
       //
       this.$emit('addOperation', {
-        leftHandSide: 4,
-        rightHandSide: 5,
-        operator: '+',
+        leftHandSide: 999,
+        rightHandSide: 9999,
+        operator: 'updateOperation',
       });
     },
   },
   async mounted() {
-    const easyFHE = await getFheModule();
-    await easyFHE.Setup.initialize();
-    easyFHE.Setup.fastSetup(
-      EasyScheme.BFV,
-      EasySecurity.TC128,
-      EasySpeed.NORMAL,
-      EasyPrecision.HIGH
+    this.loadingModule = true;
+    this.easyFHE = await getFheModule();
+    await this.easyFHE.Setup.initialize();
+    this.loadingModule = false;
+    this.scheme.scheme.value;
+    this.easyFHE.Setup.fastSetup(
+      this.scheme.scheme.value,
+      this.scheme.security.value,
+      this.scheme.speed.value,
+      this.scheme.precision.value
     );
-
-    const [publicKey_i32, secretKey_i32] = easyFHE.generateKeys();
-    const data1_i32: Int32Array = Int32Array.from([1, 2, 3, 4, 5, 6, 7]);
-    const data2_i32: Int32Array = Int32Array.from([12, 22, 32, 42, 52, 62, 72]);
-    const c1_i32 = easyFHE.encrypt(data1_i32, publicKey_i32);
-    const c2_i32 = easyFHE.encrypt(data2_i32, publicKey_i32);
-    const c3_i32 = easyFHE.Cipher.add(c1_i32.save(), c2_i32.save());
-    const result_i32 = easyFHE.decrypt(c3_i32.save(), secretKey_i32);
-    console.log('i32', result_i32);
+    const [p, s] = this.easyFHE.generateKeys();
+    this.publicKey = markRaw(p);
+    this.secretKey = markRaw(s);
   },
 });
 </script>
 <style lang="scss" scoped>
-.new-operation {
-  height: 200px;
+:deep(.q-inner-loading) {
+  background: rgba(255, 255, 255, 0.9);
 }
+
 .list-parameters {
   display: flex;
 }

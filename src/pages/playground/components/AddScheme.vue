@@ -189,18 +189,11 @@ export default defineComponent({
     ];
     const speeds = [
       {
-        label: 'Very slow',
-        value: EasySpeed.VERY_SLOW,
-        fullName: 'The scheme parameters will have the biggest',
-        description: 'values, impacting severely the speed of computations',
-        icon: 'mdi-circle-slice-5',
-      },
-      {
-        label: 'Slow',
-        value: EasySpeed.SLOW,
-        fullName: 'The scheme parameters will have bigger',
-        description: 'values, impacting the speed of computations',
-        icon: 'mdi-circle-slice-4',
+        label: 'Fast',
+        value: EasySpeed.FAST,
+        fullName: 'The scheme parameters will have smaller values,',
+        description: 'increasing the speed of computations',
+        icon: 'mdi-circle-slice-2',
       },
       {
         label: 'Normal',
@@ -210,11 +203,18 @@ export default defineComponent({
         icon: 'mdi-circle-slice-3',
       },
       {
-        label: 'Fast',
-        value: EasySpeed.FAST,
-        fullName: 'The scheme parameters will have smaller values,',
-        description: 'increasing the speed of computations',
-        icon: 'mdi-circle-slice-2',
+        label: 'Slow',
+        value: EasySpeed.SLOW,
+        fullName: 'The scheme parameters will have bigger',
+        description: 'values, impacting the speed of computations',
+        icon: 'mdi-circle-slice-4',
+      },
+      {
+        label: 'Very slow',
+        value: EasySpeed.VERY_SLOW,
+        fullName: 'The scheme parameters will have the biggest',
+        description: 'values, impacting severely the speed of computations',
+        icon: 'mdi-circle-slice-5',
       },
     ];
     const precisions = [

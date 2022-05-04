@@ -1,17 +1,20 @@
 <template>
   <q-card class="bg-blue-9 q-pa-md q-ma-md">
-    <q-section>
+    <q-card-section>
       <div class="operation-container">
         <div class="grid-operations">
           <div class="grid-operation q-pa-sm plain-group">
             <div class="cipher-plaintext-toggle">
               Plaintext
               <q-toggle
-                v-model="currentOperation.leftHandSide.isEncrypted"
+                v-model="operation.leftSide.type"
                 checked-icon="check"
                 color="red"
+                :false-value="ValueType.PLAIN"
+                :true-value="ValueType.CIPHER"
                 keep-color
                 unchecked-icon="clear"
+                :readonly="encOperation.isComputed"
                 label="Ciphertext"
               ></q-toggle>
             </div>
@@ -19,11 +22,14 @@
             <div class="cipher-plaintext-toggle">
               Plaintext
               <q-toggle
-                v-model="currentOperation.rightHandSide.isEncrypted"
+                v-model="operation.rightSide.type"
                 checked-icon="check"
                 color="red"
+                :false-value="ValueType.PLAIN"
+                :true-value="ValueType.CIPHER"
                 keep-color
                 unchecked-icon="clear"
+                :readonly="encOperation.isComputed"
                 label="Ciphertext"
               ></q-toggle>
             </div>
@@ -33,8 +39,9 @@
               color="black"
               bg-color="white"
               outlined
+              :readonly="encOperation.isComputed"
               class="q-pa-sm"
-              v-model="currentOperation.leftHandSide.value"
+              v-model="operation.leftSide.value"
               label="Left parameter"
             ></q-input>
             <q-select
@@ -42,7 +49,7 @@
               outlined
               style="width: 130px"
               class="q-pa-sm"
-              v-model="currentOperation.operator"
+              v-model="operation.operator"
               :options="operationsSigns"
               label="Operator"
             ></q-select>
@@ -52,7 +59,8 @@
               bg-color="white"
               outlined
               class="q-pa-sm"
-              v-model="currentOperation.rightHandSide.value"
+              v-model="operation.rightSide.value"
+              :readonly="encOperation.isComputed"
               label="Right parameter"
             ></q-input>
 
@@ -63,19 +71,36 @@
               outlined
               class="q-pa-sm"
               type="text"
-              v-model="currentOperation.equal"
+              model-value="="
               readonly
             ></q-input>
 
-            <q-input
-              color="black"
-              bg-color="white"
-              outlined
-              class="q-pa-sm"
-              type="text"
-              v-model="currentOperation.result"
-              label="Result"
-            ></q-input>
+            <Transition :duration="550" name="nested">
+              <div v-if="showDecrypted" class="outer">
+                <q-input
+                  color="black"
+                  bg-color="white"
+                  outlined
+                  class="q-pa-sm"
+                  type="text"
+                  v-model="operation.result"
+                  :readonly="encOperation.isComputed"
+                  label="Result"
+                ></q-input>
+              </div>
+            </Transition>
+            <div v-if="!showDecrypted" class="outer">
+              <q-input
+                color="black"
+                bg-color="white"
+                outlined
+                class="q-pa-sm"
+                style="visibility: hidden"
+                type="text"
+                v-model="operation.result"
+                label="Result"
+              ></q-input>
+            </div>
           </div>
           <Transition :duration="550" name="nested">
             <div v-if="showEncrypted" class="outer">
@@ -85,7 +110,8 @@
                   bg-color="white"
                   outlined
                   class="q-pa-sm"
-                  v-model="currentOperation.leftHandSide.value"
+                  v-model="encOperation.leftSide.value"
+                  readonly
                   label="Left parameter"
                 ></q-input>
                 <q-select
@@ -93,17 +119,19 @@
                   outlined
                   style="width: 130px"
                   class="q-pa-sm"
-                  v-model="currentOperation.operator"
+                  v-model="operation.operator"
                   :options="operationsSigns"
                   label="Operator"
+                  readonly
                 ></q-select>
                 <q-input
                   color="black"
                   bg-color="white"
                   outlined
                   class="q-pa-sm"
-                  v-model="currentOperation.rightHandSide.value"
+                  v-model="encOperation.rightSide.value"
                   label="Right parameter"
+                  readonly
                 ></q-input>
                 <q-input
                   style="width: 50px"
@@ -112,7 +140,7 @@
                   outlined
                   class="q-pa-sm"
                   type="text"
-                  v-model="currentOperation.equal"
+                  model-value="="
                   readonly
                 ></q-input>
                 <q-input
@@ -121,7 +149,8 @@
                   outlined
                   class="q-pa-sm"
                   type="text"
-                  v-model="currentOperation.result"
+                  v-model="encOperation.result"
+                  readonly
                   label="Result"
                 ></q-input>
               </div>
@@ -130,40 +159,66 @@
         </div>
       </div>
       <div class="operation-buttons">
-        <q-btn flat @click="compute" icon="mdi-cogs">Compute</q-btn>
-        <q-btn flat @click="compute" icon="mdi-key">Decrypt</q-btn>
+        <q-btn
+          flat
+          @click="compute"
+          :disable="encOperation.isComputed"
+          icon="mdi-cogs"
+          >Compute</q-btn
+        >
+        <q-btn flat @click="decrypt" :disable="showDecrypted" icon="mdi-key"
+          >Decrypt</q-btn
+        >
       </div>
-      <!-- <q-inner-loading
-        :showing="cardLoading"
-        label="Please wait..."
-        label-class="text-grey-10"
-        label-style="font-size: 1.4em"
-      ></q-inner-loading> -->
-      <q-inner-loading :showing="cardLoading" label-class="bg-white">
-        <q-spinner-gears size="50px" color="primary"></q-spinner-gears>
-        Please wait...
+
+      <q-inner-loading
+        :showing="computingLoading"
+        :label-style="{ fontSize: '1.5rem', color: '#1976D2' }"
+      >
+        <q-spinner-gears size="50px" color="blue-10"></q-spinner-gears>
+        <span :style="{ fontSize: '1.5rem', color: '#1976D2' }">
+          Computing....
+        </span>
       </q-inner-loading>
-    </q-section>
+    </q-card-section>
   </q-card>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, Ref, ref } from 'vue';
-import getFheModule, { EasyPublicKey, EasySecretKey, FHEModule } from 'easyFHE';
+import { EasyPublicKey, EasyScheme, EasySecretKey, FHEModule } from 'easyFHE';
 
 import { usePlaygroundStore } from 'src/stores/playground';
 import { storeToRefs } from 'pinia';
 import {
-  EncryptedOperation,
   HomomorphicScheme,
   Operation,
+  ValueType,
+  EncryptedOperation,
 } from 'src/types/models';
+import computeMixin from './mixins/compute.mixin';
+import decryptMixin from './mixins/decrypt.mixin';
+
 export default defineComponent({
   name: 'OperationBuilder',
+  emits: ['updateOperation'],
   components: {},
+  mixins: [computeMixin, decryptMixin],
   props: {
     scheme: {
       type: Object as PropType<HomomorphicScheme>,
+      required: true,
+    },
+    easyFHE: {
+      type: Object as PropType<FHEModule>,
+      required: true,
+    },
+    publicKey: {
+      type: Object as PropType<EasyPublicKey>,
+      required: true,
+    },
+    secretKey: {
+      type: Object as PropType<EasySecretKey>,
       required: true,
     },
   },
@@ -172,55 +227,101 @@ export default defineComponent({
     const { homomorphicSchemes } = storeToRefs(playgroundStore);
 
     const operationsSigns = ['+', '-', '*'];
-    const currentOperation: Ref<Operation> = ref({
-      leftHandSide: { value: 0, isEncrypted: false },
+    const operation: Ref<Operation> = ref({
+      leftSide: { value: '', type: ValueType.PLAIN },
       operator: '+',
-      rightHandSide: { value: 0, isEncrypted: false },
-      equal: '=',
-      result: 0,
+      rightSide: { value: '', type: ValueType.PLAIN },
+      result: '?',
     });
-    const currentEncryptedOperation: Ref<EncryptedOperation> = ref({
-      leftHandSide: { value: '', isEncrypted: false },
+    const encOperation: Ref<EncryptedOperation> = ref({
+      leftSide: { value: '', type: ValueType.PLAIN },
       operator: '+',
-      rightHandSide: { value: '', isEncrypted: false },
-      equal: '=',
-      result: '',
+      rightSide: { value: '', type: ValueType.PLAIN },
+      result: '?',
+      isComputed: false,
     });
     return {
-      cardLoading: ref(false),
+      computingLoading: ref(false),
       showEncrypted: ref(false),
+      showDecrypted: ref(false),
       operationsSigns,
       homomorphicSchemes,
-      currentOperation,
-      currentEncryptedOperation,
-      easyFHE: ref(null) as unknown as FHEModule,
-      publicKey: ref(null) as unknown as EasyPublicKey,
-      secretKey: ref(null) as unknown as EasySecretKey,
+      operation,
+      encOperation,
+      ValueType,
     };
   },
-  methods: {
-    compute() {
-      this.cardLoading = true;
-      setTimeout(() => {
-        this.cardLoading = false;
-      }, 1000);
-      [this.publicKey, this.secretKey] = this.easyFHE.generateKeys();
 
-      setTimeout(() => {
-        this.showEncrypted = true;
-      }, 2000);
+  computed: {
+    leftParameter() {
+      const intValue = Array.from(
+        this.operation.leftSide.value.split(','),
+        (x) => Number.parseInt(x)
+      ).filter((e) => !Number.isNaN(e));
+      const floatValue = Array.from(
+        this.operation.leftSide.value.split(','),
+        (x) => Number.parseFloat(x)
+      ).filter((e) => !Number.isNaN(e));
+      switch (this.scheme.scheme.value) {
+        case EasyScheme.BFV:
+        case EasyScheme.BGV:
+        default:
+          return Int32Array.from(intValue);
+
+        case EasyScheme.CKKS:
+          return Float64Array.from(floatValue);
+      }
+    },
+    rightParameter() {
+      const intValue = Array.from(
+        this.operation.rightSide.value.split(','),
+        (x) => Number.parseInt(x)
+      ).filter((e) => !Number.isNaN(e));
+      const floatValue = Array.from(
+        this.operation.rightSide.value.split(','),
+        (x) => Number.parseFloat(x)
+      ).filter((e) => !Number.isNaN(e));
+      switch (this.scheme.scheme.value) {
+        case EasyScheme.BFV:
+        case EasyScheme.BGV:
+        default:
+          return Int32Array.from(intValue);
+
+        case EasyScheme.CKKS:
+          return Float64Array.from(floatValue);
+      }
     },
   },
-  async mounted() {
-    this.easyFHE = await getFheModule();
-    await this.easyFHE.Setup.initialize();
-    this.scheme.scheme.value;
-    this.easyFHE.Setup.fastSetup(
-      this.scheme.scheme.value,
-      this.scheme.security.value,
-      this.scheme.speed.value,
-      this.scheme.precision.value
-    );
+  methods: {
+    delay(miliseconds: number) {
+      return new Promise((resolve) => setTimeout(resolve, miliseconds));
+    },
+    compute() {
+      this.computingLoading = true;
+
+      this.$emit('updateOperation', this.operation);
+      const s: EasyScheme = this.scheme.scheme.value;
+      const p1: ValueType = this.operation.leftSide.type;
+      const op = this.operation.operator;
+      const p2: ValueType = this.operation.rightSide.type;
+      this.computationMap[s][p1][op][p2]();
+      this.delay(1000)
+        .then(() => {
+          this.computingLoading = false;
+        })
+        .then(() => {
+          this.delay(200).then(() => {
+            this.showEncrypted = true;
+          });
+        });
+    },
+    decrypt() {
+      const s: EasyScheme = this.scheme.scheme.value;
+      const p1: ValueType = this.operation.leftSide.type;
+      const op = this.operation.operator;
+      const p2: ValueType = this.operation.rightSide.type;
+      this.decryptionMap[s][p1][op][p2]();
+    },
   },
 });
 </script>
