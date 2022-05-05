@@ -80,6 +80,7 @@
         </span>
       </q-inner-loading>
     </q-card>
+    <CodeComparison :scheme="scheme" />
   </div>
 </template>
 
@@ -94,11 +95,13 @@ import getFheModule, {
 
 import { HomomorphicScheme, Operation } from 'src/types/models';
 import OperationBuilder from './OperationBuilder.vue';
+import CodeComparison from './CodeComparison.vue';
+
 import { usePlaygroundStore } from 'src/stores/playground';
 import { storeToRefs } from 'pinia';
 export default defineComponent({
   name: 'SchemeBuilder',
-  components: { OperationBuilder },
+  components: { OperationBuilder, CodeComparison },
   emits: ['addOperation', 'removeScheme'],
   props: {
     scheme: {
@@ -108,8 +111,10 @@ export default defineComponent({
   },
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { homomorphicSchemes } = storeToRefs(playgroundStore);
+    const { homomorphicSchemes, openCodeComparison } =
+      storeToRefs(playgroundStore);
     return {
+      openCodeComparison,
       EasyScheme,
       homomorphicSchemes,
       loadingModule: ref(false),
@@ -121,6 +126,7 @@ export default defineComponent({
   methods: {
     compareCode() {
       console.log(this.scheme);
+      this.openCodeComparison = true;
     },
     updateOperationFromCurrentScheme(
       scheme: HomomorphicScheme,
