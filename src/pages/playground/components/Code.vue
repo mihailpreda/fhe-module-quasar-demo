@@ -1,37 +1,35 @@
 <template>
   <q-page-sticky position="bottom-right" :offset="[30, 20]">
-    <q-btn
-      class="q-pa-sm copy-btn"
-      round
-      color="blue-10"
-      icon="mdi-content-copy"
-    >
+    <q-btn class="q-pa-sm copy-btn" round color="blue-10" icon="mdi-content-copy">
       <q-tooltip :offset="[0, 10]" class="bg-blue-8 q-ma-sm text-white">
         Copy code
       </q-tooltip>
     </q-btn>
   </q-page-sticky>
   <div class="code-container">
-    <div
-      v-for="(line, index) in code"
-      :key="index"
-      class="code-lines-container"
-    >
+    <div v-for="(line, index) in code" :key="index" class="code-lines-container">
       <div class="line-number">{{ index + 1 }}</div>
-      <div class="line-code">{{ line }}</div>
+      <div class="line-code" v-html="line"></div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { HomomorphicScheme } from 'src/types/models';
+import { HomomorphicScheme, Operation } from 'src/types/models';
+import easyFHECodeMixin from './mixins/easyFHE.code.mixin';
+import nodeSealCodeMixin from './mixins/nodeSEAL.code.mixin';
 export default defineComponent({
   name: 'Code',
   components: {},
+  mixins: [easyFHECodeMixin, nodeSealCodeMixin],
   props: {
     scheme: {
       type: Object as PropType<HomomorphicScheme>,
+      required: true,
+    },
+    generatedCode: {
+      type: String,
       required: true,
     },
   },
@@ -42,92 +40,33 @@ export default defineComponent({
   },
   computed: {
     code() {
-      return [
-        '(async () => {',
-        '    // Pick one for your environment',
-        '    // npm install node-seal',
-        '    // yarn add node-seal',
-        '    //',
-        '    // ES6 or CommonJS',
-        "    // import SEAL from 'node-seal'",
-        "    const SEAL = require('node-seal')",
-        '    ',
-        '    // Wait for the web assembly to fully initialize',
-        '    const seal = await SEAL()',
-        '    ',
-        '    ////////////////////////',
-        '    // Encryption Parameters',
-        '    ////////////////////////',
-        '    ',
-        '    // Create a new EncryptionParameters',
-        '    const schemeType = seal.SchemeType.bfv',
-        '    const securityLevel = seal.SecurityLevel.tc128',
-        '    const polyModulusDegree = 4096',
-        '    const bitSizes = [36,36,37]',
-        '    const bitSize = 20',
-        '    ',
-        '    const encParms = seal.EncryptionParameters(schemeType)',
-        '',
-        '    // Assign Poly Modulus Degree',
-        '    encParms.setPolyModulusDegree(polyModulusDegree)',
-        '    ',
-        '    // Create a suitable set of CoeffModulus primes',
-        '    encParms.setCoeffModulus(',
-        '      seal.CoeffModulus.Create(',
-        '        polyModulusDegree,',
-        '        Int32Array.from(bitSizes)',
-        '      )',
-        '    )',
-        '',
-        '    // Assign a PlainModulus (only for bfv scheme type)',
-        '    encParms.setPlainModulus(',
-        '      seal.PlainModulus.Batching(',
-        '        polyModulusDegree,',
-        '        bitSize',
-        '      )',
-        '    )',
-        '',
-        '    ////////////////////////',
-        '    // Context',
-        '    ////////////////////////',
-        '    ',
-        '    // Create a new Context',
-        '    const context = seal.Context(',
-        '      encParms,',
-        '      true,',
-        '      securityLevel',
-        '    )',
-        '',
-        '    // Helper to check if the Context was created successfully',
-        '    if (!context.parametersSet()) {',
-        "      throw new Error('Could not set the parameters in the given context. Please try different encryption parameters.')",
-        '    }',
-        '',
-        '    ////////////////////////',
-        '    // Keys',
-        '    ////////////////////////',
-        '    ',
-        '    // Create a new KeyGenerator (use uploaded keys if applicable)',
-        '    const keyGenerator = seal.KeyGenerator(',
-        '      context',
-        '    )',
-        '',
-        '    ////////////////////////',
-        '    // Variables',
-        '    ////////////////////////',
-        '    ',
-        '    ////////////////////////',
-        '    // Instances',
-        '    ////////////////////////',
-        '    ',
-        '    // Create an Evaluator',
-        '    const evaluator = seal.Evaluator(context)',
-        '',
-        '    // Create a BatchEncoder (only bfv SchemeType)',
-        '    const batchEncoder = seal.BatchEncoder(context)',
-        '',
-        '})()',
-      ];
+      if (this.generatedCode === 'easy-FHE') {
+        const header = this.easyFHESetupHeader.code;
+        const scheme = this.scheme.scheme.value;
+        const code: string[] = [];
+        this.scheme.operations.forEach((op: Operation, index: number) => {
+          const codeBlock = this.easyFHECodeMap[scheme][op.leftSide.type][op.operator][
+            op.rightSide.type
+          ](op, index);
+          code.push(...codeBlock);
+        });
+        header.splice(this.easyFHESetupHeader.atIndexToInsert, 0, ...code);
+        return header;
+      }
+      if (this.generatedCode === 'node-SEAL') {
+        const header = this.nodeSealSetupHeader.code;
+        const scheme = this.scheme.scheme.value;
+        const code: string[] = [];
+        this.scheme.operations.forEach((op: Operation, index: number) => {
+          const codeBlock = this.nodeSealCodeMap[scheme][op.leftSide.type][op.operator][
+            op.rightSide.type
+          ](op, index);
+          code.push(...codeBlock);
+        });
+        header.splice(this.nodeSealSetupHeader.atIndexToInsert, 0, ...code);
+        return header;
+      }
+      return ['// unable to generate for this library'];
     },
   },
   methods: {

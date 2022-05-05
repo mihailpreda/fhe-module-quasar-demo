@@ -25,9 +25,7 @@
           </q-btn>
 
           <q-btn class="q-pa-md" dense flat icon="close" v-close-popup>
-            <q-tooltip :offset="[0, 10]" class="bg-primary text-white"
-              >Close</q-tooltip
-            >
+            <q-tooltip :offset="[0, 10]" class="bg-primary text-white">Close</q-tooltip>
           </q-btn>
         </q-bar>
         <q-card-section>
@@ -50,11 +48,7 @@
                 ref="firstRef"
                 @scroll="onScrollFirst"
               >
-                <!-- <div v-for="n in 10" :key="n" class="q-pa-sm">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </div> -->
-                <Code :scheme="scheme" />
+                <Code :scheme="scheme" generatedCode="easy-FHE" />
               </q-scroll-area>
             </div>
             <div class="col node-SEAL">
@@ -71,11 +65,7 @@
                 ref="secondRef"
                 @scroll="onScrollSecond"
               >
-                <!-- <div v-for="n in 20" :key="n" class="q-pa-sm">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </div> -->
-                <Code :scheme="scheme" />
+                <Code :scheme="scheme" generatedCode="node-SEAL" />
               </q-scroll-area>
             </div>
           </div>

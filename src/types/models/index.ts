@@ -4,6 +4,7 @@ import type { ComputationMap } from './ComputationMap';
 import type { EncryptedOperation } from './EncryptedOperation';
 import { ValueType } from './ValueType';
 import type { DecryptionMap } from './DecryptionMap';
+import type { GeneratedCodeMap } from './GeneratedCodeMap';
 
 export {
   Operation,
@@ -12,4 +13,5 @@ export {
   ValueType,
   ComputationMap,
   DecryptionMap,
+  GeneratedCodeMap,
 };
