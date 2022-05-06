@@ -1,184 +1,188 @@
 <template>
   <q-card class="bg-blue-9 q-pa-md q-ma-md">
     <q-card-section>
-      <div class="operation-container">
-        <div class="grid-operations">
-          <div class="grid-operation q-pa-sm plain-group">
-            <div class="cipher-plaintext-toggle">
-              Plaintext
-              <q-toggle
-                v-model="operation.leftSide.type"
-                checked-icon="check"
-                color="red"
-                :false-value="ValueType.PLAIN"
-                :true-value="ValueType.CIPHER"
-                keep-color
-                unchecked-icon="clear"
-                :readonly="encOperation.isComputed"
-                label="Ciphertext"
-              ></q-toggle>
-            </div>
-            <div class="empty"></div>
-            <div class="cipher-plaintext-toggle">
-              Plaintext
-              <q-toggle
-                v-model="operation.rightSide.type"
-                checked-icon="check"
-                color="red"
-                :false-value="ValueType.PLAIN"
-                :true-value="ValueType.CIPHER"
-                keep-color
-                unchecked-icon="clear"
-                :readonly="encOperation.isComputed"
-                label="Ciphertext"
-              ></q-toggle>
-            </div>
-            <div class="empty"></div>
-            <div class="empty"></div>
-            <q-input
-              color="black"
-              bg-color="white"
-              outlined
-              :readonly="encOperation.isComputed"
-              class="q-pa-sm"
-              v-model="operation.leftSide.value"
-              label="Left parameter"
-            ></q-input>
-            <q-select
-              bg-color="white"
-              outlined
-              style="width: 130px"
-              class="q-pa-sm"
-              v-model="operation.operator"
-              :options="operationsSigns"
-              label="Operator"
-            ></q-select>
-
-            <q-input
-              color="black"
-              bg-color="white"
-              outlined
-              class="q-pa-sm"
-              v-model="operation.rightSide.value"
-              :readonly="encOperation.isComputed"
-              label="Right parameter"
-            ></q-input>
-
-            <q-input
-              style="width: 50px"
-              color="black"
-              bg-color="white"
-              outlined
-              class="q-pa-sm"
-              type="text"
-              model-value="="
-              readonly
-            ></q-input>
-
-            <Transition :duration="550" name="nested">
-              <div v-if="showDecrypted" class="outer">
-                <q-input
-                  color="black"
-                  bg-color="white"
-                  outlined
-                  class="q-pa-sm"
-                  type="text"
-                  v-model="operation.result"
+      <q-form @submit="compute">
+        <div class="operation-container">
+          <div class="grid-operations">
+            <div class="grid-operation q-pa-sm plain-group">
+              <div class="cipher-plaintext-toggle">
+                Plaintext
+                <q-toggle
+                  v-model="operation.leftSide.type"
+                  checked-icon="check"
+                  color="red"
+                  :false-value="ValueType.PLAIN"
+                  :true-value="ValueType.CIPHER"
+                  keep-color
+                  unchecked-icon="clear"
                   :readonly="encOperation.isComputed"
-                  label="Result"
-                ></q-input>
+                  label="Ciphertext"
+                ></q-toggle>
               </div>
-            </Transition>
-            <div v-if="!showDecrypted" class="outer">
+              <div class="empty"></div>
+              <div class="cipher-plaintext-toggle">
+                Plaintext
+                <q-toggle
+                  v-model="operation.rightSide.type"
+                  checked-icon="check"
+                  color="red"
+                  :false-value="ValueType.PLAIN"
+                  :true-value="ValueType.CIPHER"
+                  keep-color
+                  unchecked-icon="clear"
+                  :readonly="encOperation.isComputed"
+                  label="Ciphertext"
+                ></q-toggle>
+              </div>
+              <div class="empty"></div>
+              <div class="empty"></div>
+              <q-input
+                color="black"
+                bg-color="white"
+                outlined
+                :readonly="encOperation.isComputed"
+                class="q-pa-sm lol"
+                v-model="operation.leftSide.value"
+                :rules="[
+                  validateInput,
+                  (val) => val.toString().length > 0 || 'Please input at least a number',
+                ]"
+                label="Left parameter"
+              ></q-input>
+              <q-select
+                bg-color="white"
+                outlined
+                style="width: 130px"
+                class="q-pa-sm"
+                v-model="operation.operator"
+                :options="operationsSigns"
+                label="Operator"
+              ></q-select>
+
               <q-input
                 color="black"
                 bg-color="white"
                 outlined
                 class="q-pa-sm"
-                style="visibility: hidden"
-                type="text"
-                v-model="operation.result"
-                label="Result"
+                v-model="operation.rightSide.value"
+                :readonly="encOperation.isComputed"
+                :rules="[
+                  validateInput,
+                  (val) => val.toString().length > 0 || 'Please input at least a number',
+                ]"
+                label="Right parameter"
               ></q-input>
-            </div>
-          </div>
-          <Transition :duration="550" name="nested">
-            <div v-if="showEncrypted" class="outer">
-              <div class="grid-operation q-pa-sm encrypted-group inner">
+
+              <q-input
+                style="width: 50px"
+                color="black"
+                bg-color="white"
+                outlined
+                class="q-pa-sm"
+                type="text"
+                model-value="="
+                readonly
+              ></q-input>
+
+              <Transition :duration="550" name="nested">
+                <div v-if="showDecrypted" class="outer">
+                  <q-input
+                    color="black"
+                    bg-color="white"
+                    outlined
+                    class="q-pa-sm"
+                    type="text"
+                    v-model="operation.result"
+                    :readonly="encOperation.isComputed"
+                    label="Result"
+                  ></q-input>
+                </div>
+              </Transition>
+              <div v-if="!showDecrypted" class="outer">
                 <q-input
                   color="black"
                   bg-color="white"
                   outlined
                   class="q-pa-sm"
-                  v-model="encOperation.leftSide.value"
-                  readonly
-                  label="Left parameter"
-                ></q-input>
-                <q-select
-                  bg-color="white"
-                  outlined
-                  style="width: 130px"
-                  class="q-pa-sm"
-                  v-model="operation.operator"
-                  :options="operationsSigns"
-                  label="Operator"
-                  readonly
-                ></q-select>
-                <q-input
-                  color="black"
-                  bg-color="white"
-                  outlined
-                  class="q-pa-sm"
-                  v-model="encOperation.rightSide.value"
-                  label="Right parameter"
-                  readonly
-                ></q-input>
-                <q-input
-                  style="width: 50px"
-                  color="black"
-                  bg-color="white"
-                  outlined
-                  class="q-pa-sm"
+                  style="visibility: hidden"
                   type="text"
-                  model-value="="
-                  readonly
-                ></q-input>
-                <q-input
-                  color="black"
-                  bg-color="white"
-                  outlined
-                  class="q-pa-sm"
-                  type="text"
-                  v-model="encOperation.result"
-                  readonly
+                  v-model="operation.result"
                   label="Result"
                 ></q-input>
               </div>
             </div>
-          </Transition>
+            <Transition :duration="550" name="nested">
+              <div v-if="showEncrypted" class="outer">
+                <div class="grid-operation q-pa-sm encrypted-group inner">
+                  <q-input
+                    color="black"
+                    bg-color="white"
+                    outlined
+                    class="q-pa-sm"
+                    v-model="encOperation.leftSide.value"
+                    readonly
+                    label="Left parameter"
+                  ></q-input>
+                  <q-select
+                    bg-color="white"
+                    outlined
+                    style="width: 130px"
+                    class="q-pa-sm"
+                    v-model="operation.operator"
+                    :options="operationsSigns"
+                    label="Operator"
+                    readonly
+                  ></q-select>
+                  <q-input
+                    color="black"
+                    bg-color="white"
+                    outlined
+                    class="q-pa-sm"
+                    v-model="encOperation.rightSide.value"
+                    label="Right parameter"
+                    readonly
+                  ></q-input>
+                  <q-input
+                    style="width: 50px"
+                    color="black"
+                    bg-color="white"
+                    outlined
+                    class="q-pa-sm"
+                    type="text"
+                    model-value="="
+                    readonly
+                  ></q-input>
+                  <q-input
+                    color="black"
+                    bg-color="white"
+                    outlined
+                    class="q-pa-sm"
+                    type="text"
+                    v-model="encOperation.result"
+                    readonly
+                    label="Result"
+                  ></q-input>
+                </div>
+              </div>
+            </Transition>
+          </div>
         </div>
-      </div>
-      <div class="operation-buttons">
-        <q-btn
-          flat
-          @click="compute"
-          :disable="encOperation.isComputed"
-          icon="mdi-cogs"
-          >Compute</q-btn
-        >
-        <q-btn flat @click="decrypt" :disable="showDecrypted" icon="mdi-key"
-          >Decrypt</q-btn
-        >
-      </div>
+        <div class="operation-buttons">
+          <q-btn flat type="submit" :disable="encOperation.isComputed" icon="mdi-cogs"
+            >Compute</q-btn
+          >
 
+          <q-btn flat @click="decrypt" :disable="!operation.isComputed" icon="mdi-key"
+            >Decrypt</q-btn
+          >
+        </div>
+      </q-form>
       <q-inner-loading
         :showing="computingLoading"
         :label-style="{ fontSize: '1.5rem', color: '#1976D2' }"
       >
         <q-spinner-gears size="50px" color="blue-10"></q-spinner-gears>
-        <span :style="{ fontSize: '1.5rem', color: '#1976D2' }">
-          Computing....
-        </span>
+        <span :style="{ fontSize: '1.5rem', color: '#1976D2' }"> Computing.... </span>
       </q-inner-loading>
     </q-card-section>
   </q-card>
@@ -232,6 +236,7 @@ export default defineComponent({
       operator: '+',
       rightSide: { value: '', type: ValueType.PLAIN },
       result: '?',
+      isComputed: false,
     });
     const encOperation: Ref<EncryptedOperation> = ref({
       leftSide: { value: '', type: ValueType.PLAIN },
@@ -254,13 +259,11 @@ export default defineComponent({
 
   computed: {
     leftParameter() {
-      const intValue = Array.from(
-        this.operation.leftSide.value.split(','),
-        (x) => Number.parseInt(x)
+      const intValue = Array.from(this.operation.leftSide.value.split(','), (x) =>
+        Number.parseInt(x)
       ).filter((e) => !Number.isNaN(e));
-      const floatValue = Array.from(
-        this.operation.leftSide.value.split(','),
-        (x) => Number.parseFloat(x)
+      const floatValue = Array.from(this.operation.leftSide.value.split(','), (x) =>
+        Number.parseFloat(x)
       ).filter((e) => !Number.isNaN(e));
       switch (this.scheme.scheme.value) {
         case EasyScheme.BFV:
@@ -273,13 +276,11 @@ export default defineComponent({
       }
     },
     rightParameter() {
-      const intValue = Array.from(
-        this.operation.rightSide.value.split(','),
-        (x) => Number.parseInt(x)
+      const intValue = Array.from(this.operation.rightSide.value.split(','), (x) =>
+        Number.parseInt(x)
       ).filter((e) => !Number.isNaN(e));
-      const floatValue = Array.from(
-        this.operation.rightSide.value.split(','),
-        (x) => Number.parseFloat(x)
+      const floatValue = Array.from(this.operation.rightSide.value.split(','), (x) =>
+        Number.parseFloat(x)
       ).filter((e) => !Number.isNaN(e));
       switch (this.scheme.scheme.value) {
         case EasyScheme.BFV:
@@ -293,6 +294,10 @@ export default defineComponent({
     },
   },
   methods: {
+    validateInput(value: string): string | boolean | Promise<string | boolean> {
+      const reg = /[a-z]/gi;
+      return !reg.test(value) || 'Please input only numbers!';
+    },
     delay(miliseconds: number) {
       return new Promise((resolve) => setTimeout(resolve, miliseconds));
     },
@@ -305,6 +310,7 @@ export default defineComponent({
       const op = this.operation.operator;
       const p2: ValueType = this.operation.rightSide.type;
       this.computationMap[s][p1][op][p2]();
+      this.operation.isComputed = true;
       this.delay(1000)
         .then(() => {
           this.computingLoading = false;
@@ -358,6 +364,13 @@ export default defineComponent({
   background: rgba(255, 255, 255, 0.9);
 }
 
+.q-input .text-negative {
+  color: rgb(255, 255, 255) !important;
+}
+.q-field--error .q-field__bottom {
+  color: rgb(255, 255, 255) !important;
+  color: rgb(255, 255, 255) !important;
+}
 /************************************************ */
 @import './animation.scss';
 </style>

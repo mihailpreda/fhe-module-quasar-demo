@@ -1,9 +1,9 @@
 <template>
   <div class="q-pa-md q-gutter-sm">
     <q-dialog
-      v-model="openCodeComparisonDialog"
+      v-model="openGraphsDialog"
       persistent
-      :maximized="isFullScreen"
+      :maximized="true"
       transition-show="slide-up"
       transition-hide="slide-down"
       full-width
@@ -11,82 +11,30 @@
       <q-card class="bg-white text-black">
         <q-bar class="bg-primary text-white">
           <q-space></q-space>
-          <q-btn
-            dense
-            flat
-            class="q-pa-md"
-            :icon="isFullScreen ? 'mdi-arrow-collapse' : 'mdi-arrow-expand'"
-            @click="toggleFullscreen"
-          >
-            <q-tooltip :offset="[0, 10]" class="bg-primary text-white">{{
-              isFullScreen ? 'Minimized' : 'Fullscreen'
-            }}</q-tooltip>
-          </q-btn>
-
           <q-btn class="q-pa-md" dense flat icon="close" v-close-popup>
             <q-tooltip :offset="[0, 10]" class="bg-primary text-white">Close</q-tooltip>
           </q-btn>
         </q-bar>
         <q-card-section>
-          <div class="text-h5 text-center">Code Comparison</div>
+          <div class="text-h3 text-center">Code Comparison visualization</div>
         </q-card-section>
-        <q-separator></q-separator>
-        <q-card-section>
-          <div class="row no-wrap">
-            <div class="col easy-FHE">
-              <div class="text-subtitle1 text-center q-pb-md">easyFHE</div>
 
-              <q-scroll-area
-                visible
-                :thumb-style="thumbStyle"
-                :bar-style="barStyle"
-                :style="{
-                  height: isFullScreen ? '40vh' : '30vh',
-                }"
-                ref="firstRef"
-                @scroll="onScrollFirst"
-              >
-                <Code :scheme="scheme" generatedCode="easy-FHE" />
-              </q-scroll-area>
-            </div>
-            <div class="col node-SEAL">
-              <div class="text-subtitle1 text-center q-pb-md">node-seal</div>
-
-              <q-scroll-area
-                visible
-                :thumb-style="thumbStyle"
-                :bar-style="barStyle"
-                :style="{
-                  height: isFullScreen ? '40vh' : '30vh',
-                }"
-                ref="secondRef"
-                @scroll="onScrollSecond"
-              >
-                <Code :scheme="scheme" generatedCode="node-SEAL" />
-              </q-scroll-area>
-            </div>
-          </div>
-        </q-card-section>
-        <q-separator></q-separator>
-        <q-card-section>
-          <div class="text-h5 text-center">Statistics</div>
-          <q-btn flat icon="mdi-chart-bar" @click="openGraphs">Full screen graphs</q-btn>
-          <Graphs :scheme="scheme" />
+        <q-card-section style="height: '80vh'">
           <div class="q-ma-sm row">
             <div id="loc-chart" class="col">
-              <div class="text-center">Lines of Code</div>
+              <div class="text-center text-h4">Lines of Code</div>
               <VueApexCharts
                 type="bar"
-                height="250"
+                height="auto"
                 :options="chartOptions"
                 :series="series"
               ></VueApexCharts>
             </div>
             <div id="speed-chart" class="col">
-              <div class="text-center">Speed</div>
+              <div class="text-center text-h4">Speed</div>
               <VueApexCharts
                 type="bar"
-                height="250"
+                height="auto"
                 :options="chartOptions"
                 :series="series"
               ></VueApexCharts>
@@ -99,19 +47,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { usePlaygroundStore } from 'src/stores/playground';
 import { storeToRefs } from 'pinia';
 import { HomomorphicScheme, Operation } from 'src/types/models';
-import { QScrollArea } from 'quasar';
 import VueApexCharts from 'vue3-apexcharts';
-import Code from './Code.vue';
 import easyFHECodeMixin from './mixins/easyFHE.code.mixin';
 import nodeSealCodeMixin from './mixins/nodeSEAL.code.mixin';
-import Graphs from './Graphs.vue';
 export default defineComponent({
   name: 'CodeComparison',
-  components: { Code, VueApexCharts, Graphs },
+  components: { VueApexCharts },
   mixins: [easyFHECodeMixin, nodeSealCodeMixin],
   props: {
     scheme: {
@@ -121,17 +66,10 @@ export default defineComponent({
   },
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { openCodeComparisonDialog, openGraphsDialog } = storeToRefs(playgroundStore);
-    const firstRef = ref<QScrollArea>();
-    const secondRef = ref<QScrollArea>();
-    let ignoreSource = ref('');
+    const { openGraphsDialog } = storeToRefs(playgroundStore);
+
     return {
-      openCodeComparisonDialog,
       openGraphsDialog,
-      isFullScreen: ref(false),
-      firstRef,
-      secondRef,
-      ignoreSource,
     };
   },
   computed: {
@@ -188,9 +126,9 @@ export default defineComponent({
       });
       easyFHEStats.total =
         easyFHEStats.setup + easyFHEStats.operations + easyFHEStats.deallocations;
-      //+easyFHEStats.commentsAndBlankLines;
+      // +easyFHEStats.commentsAndBlankLines;
       sealStats.total = sealStats.setup + sealStats.operations + sealStats.deallocations;
-      //+sealStats.commentsAndBlankLines;
+      // +sealStats.commentsAndBlankLines;
       return {
         stats: {
           easyFHE: easyFHEStats,
@@ -214,20 +152,8 @@ export default defineComponent({
               speed: 450,
             },
           },
-          title: {
-            text: 'libraries',
-            offsetX: 0,
-            offsetY: 0,
-            style: {
-              // color: undefined,
-              fontSize: '16px',
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 600,
-              cssClass: 'apexcharts-xaxis-title',
-            },
-          },
           type: 'bar',
-          height: 250,
+          height: 'auto',
           stacked: true,
           toolbar: {
             show: true,
@@ -345,59 +271,10 @@ export default defineComponent({
         // },
       ];
     },
-    thumbStyle(): Partial<CSSStyleDeclaration> {
-      return {
-        right: '4px',
-        borderRadius: '7px',
-        backgroundColor: '#027be3',
-        width: '4px',
-        opacity: '0.75',
-      };
-    },
-    barStyle(): Partial<CSSStyleDeclaration> {
-      return {
-        right: '2px',
-        borderRadius: '9px',
-        backgroundColor: '#bdbdbd',
-        width: '8px',
-        opacity: '0.2',
-      };
-    },
   },
   methods: {
-    scroll(source: string, position: number) {
-      // if we previously just updated
-      // the scroll position, then ignore
-      // this update as otherwise we'll flicker
-      // the position from one scroll area to
-      // the other in an infinite loop
-      if (this.ignoreSource === source) {
-        this.ignoreSource = '';
-        return;
-      }
-
-      // we'll now update the other scroll area,
-      // which will also trigger a @scroll event...
-      // and we need to ignore that one
-      this.ignoreSource = source === 'first' ? 'second' : 'first';
-
-      const areaRef = source === 'first' ? this.secondRef : this.firstRef;
-
-      (areaRef as QScrollArea).setScrollPosition('vertical', position);
-    },
-
-    onScrollFirst({ verticalPosition }: { verticalPosition: number }) {
-      this.scroll('first', verticalPosition);
-    },
-
-    onScrollSecond({ verticalPosition }: { verticalPosition: number }) {
-      this.scroll('second', verticalPosition);
-    },
-    toggleFullscreen() {
-      this.isFullScreen = !this.isFullScreen;
-    },
-    openGraphs() {
-      this.openGraphsDialog = true;
+    closeGraphs() {
+      this.openGraphsDialog = false;
     },
   },
 });

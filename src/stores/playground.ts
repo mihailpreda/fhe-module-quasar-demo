@@ -8,14 +8,16 @@ interface PlaygroundStoreState {
   homomorphicSchemes: HomomorphicScheme[];
   openDialog: boolean;
   schemeID: number;
-  openCodeComparison: boolean;
+  openCodeComparisonDialog: boolean;
+  openGraphsDialog: boolean;
 }
 
 const PlaygroundStoreState: PlaygroundStoreState = {
   schemeID: 0,
   homomorphicSchemes: [],
   openDialog: false,
-  openCodeComparison: false,
+  openCodeComparisonDialog: false,
+  openGraphsDialog: false,
 };
 
 export { PlaygroundStoreState };

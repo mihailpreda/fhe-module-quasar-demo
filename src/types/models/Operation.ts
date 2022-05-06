@@ -5,4 +5,5 @@ export interface Operation {
   rightSide: { value: string; type: ValueType };
   operator: string;
   result: string;
+  isComputed: boolean;
 }

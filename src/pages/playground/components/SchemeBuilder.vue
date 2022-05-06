@@ -14,26 +14,20 @@
               <q-item-section class="icon-avatar" avatar>
                 <q-icon color="white" name="mdi-shield-lock"></q-icon>
               </q-item-section>
-              <q-item-section
-                >EasySecurity: {{ scheme.security.label }}</q-item-section
-              >
+              <q-item-section>EasySecurity: {{ scheme.security.label }}</q-item-section>
             </q-item>
 
             <q-item>
               <q-item-section class="icon-avatar" avatar>
                 <q-icon color="white" name="mdi-circle-slice-5"></q-icon>
               </q-item-section>
-              <q-item-section
-                >Processing speed: {{ scheme.speed.label }}</q-item-section
-              >
+              <q-item-section>Processing speed: {{ scheme.speed.label }}</q-item-section>
             </q-item>
             <q-item v-if="scheme.scheme.value === EasyScheme.CKKS">
               <q-item-section class="icon-avatar" avatar>
                 <q-icon color="white" name="mdi-chevron-double-up"></q-icon>
               </q-item-section>
-              <q-item-section
-                >EasyPrecision: {{ scheme.precision.label }}</q-item-section
-              >
+              <q-item-section>EasyPrecision: {{ scheme.precision.label }}</q-item-section>
             </q-item>
           </q-list>
         </div>
@@ -63,12 +57,14 @@
 
       <q-card-actions>
         <q-btn flat @click="addOperation" icon="add">Add Operation</q-btn>
-        <q-btn flat icon="mdi-file-compare" @click="compareCode"
+        <q-btn
+          flat
+          icon="mdi-file-compare"
+          :disable="!isDisabledCompareCode"
+          @click="compareCode"
           >Compare Code</q-btn
         >
-        <q-btn flat icon="mdi-delete" @click="removeScheme"
-          >Delete Scheme</q-btn
-        >
+        <q-btn flat icon="mdi-delete" @click="removeScheme">Delete Scheme</q-btn>
       </q-card-actions>
       <q-inner-loading
         :showing="loadingModule"
@@ -111,31 +107,28 @@ export default defineComponent({
   },
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { homomorphicSchemes, openCodeComparison } =
-      storeToRefs(playgroundStore);
+    const { homomorphicSchemes, openCodeComparisonDialog } = storeToRefs(playgroundStore);
     return {
-      openCodeComparison,
+      openCodeComparisonDialog,
       EasyScheme,
       homomorphicSchemes,
       loadingModule: ref(false),
       easyFHE: ref(null) as unknown as FHEModule,
       publicKey: ref(null) as unknown as EasyPublicKey,
       secretKey: ref(null) as unknown as EasySecretKey,
+      isDisabledCompareCode: ref(false),
     };
   },
   methods: {
     compareCode() {
-      console.log(this.scheme);
-      this.openCodeComparison = true;
+      this.openCodeComparisonDialog = true;
     },
-    updateOperationFromCurrentScheme(
-      scheme: HomomorphicScheme,
-      operation: Operation
-    ) {
+    updateOperationFromCurrentScheme(scheme: HomomorphicScheme, operation: Operation) {
       const index = scheme.operations.findIndex(
         (e: Operation) => e.operator == 'updateOperation'
       );
       scheme.operations[index] = operation;
+      this.isDisabledCompareCode = true;
     },
     removeScheme() {
       this.$emit('removeScheme', this.scheme);

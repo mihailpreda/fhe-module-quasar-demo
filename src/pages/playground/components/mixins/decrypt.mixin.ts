@@ -37,6 +37,7 @@ export default defineComponent({
       operator: '+',
       rightSide: { value: '', type: ValueType.PLAIN },
       result: '?',
+      isComputed: false,
     });
     const encOperation: Ref<EncryptedOperation> = ref({
       leftSide: { value: '', type: ValueType.PLAIN },
@@ -55,14 +56,13 @@ export default defineComponent({
   methods: {
     decryptPlainResult() {
       this.showDecrypted = true;
+      this.operation.isComputed = true;
       this.operation.result = this.encOperation.result;
     },
     decryptCipherResult() {
-      const result = this.easyFHE.decrypt(
-        this.encOperation.result,
-        this.secretKey
-      );
+      const result = this.easyFHE.decrypt(this.encOperation.result, this.secretKey);
       this.showDecrypted = true;
+      this.operation.isComputed = true;
       this.operation.result = result.toString();
     },
   },

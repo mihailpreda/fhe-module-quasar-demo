@@ -9,7 +9,7 @@
   <div class="code-container">
     <div v-for="(line, index) in code" :key="index" class="code-lines-container">
       <div class="line-number">{{ index + 1 }}</div>
-      <div class="line-code" v-html="line"></div>
+      <div class="line-code">{{ line }}</div>
     </div>
   </div>
 </template>
@@ -92,6 +92,7 @@ export default defineComponent({
   padding: 0px;
   background: $grey-1;
   padding-left: 8px;
+  white-space: pre;
 }
 .code-container {
   padding-left: 8px;

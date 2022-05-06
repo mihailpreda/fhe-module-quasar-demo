@@ -21,6 +21,7 @@ export default defineComponent({
       operator: '+',
       rightSide: { value: '', type: ValueType.PLAIN },
       result: '?',
+      isComputed: false,
     });
     const encOperation: Ref<EncryptedOperation> = ref({
       leftSide: { value: '', type: ValueType.PLAIN },
@@ -38,13 +39,11 @@ export default defineComponent({
 
   computed: {
     leftParameter() {
-      const intValue = Array.from(
-        this.operation.leftSide.value.split(','),
-        (x) => Number.parseInt(x)
+      const intValue = Array.from(this.operation.leftSide.value.split(','), (x) =>
+        Number.parseInt(x)
       ).filter((e) => !Number.isNaN(e));
-      const floatValue = Array.from(
-        this.operation.leftSide.value.split(','),
-        (x) => Number.parseFloat(x)
+      const floatValue = Array.from(this.operation.leftSide.value.split(','), (x) =>
+        Number.parseFloat(x)
       ).filter((e) => !Number.isNaN(e));
       switch (this.scheme.scheme.value) {
         case EasyScheme.BFV:
@@ -58,13 +57,11 @@ export default defineComponent({
       }
     },
     rightParameter() {
-      const intValue = Array.from(
-        this.operation.rightSide.value.split(','),
-        (x) => Number.parseInt(x)
+      const intValue = Array.from(this.operation.rightSide.value.split(','), (x) =>
+        Number.parseInt(x)
       ).filter((e) => !Number.isNaN(e));
-      const floatValue = Array.from(
-        this.operation.rightSide.value.split(','),
-        (x) => Number.parseFloat(x)
+      const floatValue = Array.from(this.operation.rightSide.value.split(','), (x) =>
+        Number.parseFloat(x)
       ).filter((e) => !Number.isNaN(e));
       switch (this.scheme.scheme.value) {
         case EasyScheme.BFV:

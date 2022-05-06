@@ -45,12 +45,9 @@ export default defineComponent({
   },
   methods: {
     removeSchemeFromPlayground(scheme: HomomorphicScheme) {
-      //
-
       this.homomorphicSchemes = this.homomorphicSchemes.filter(
         (e: HomomorphicScheme) => e.schemeID != scheme.schemeID
       );
-      console.log(this.homomorphicSchemes);
     },
     addOperationToScheme(scheme: HomomorphicScheme, operation: Operation) {
       scheme.operations.push(operation);

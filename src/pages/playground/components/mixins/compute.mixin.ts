@@ -36,6 +36,7 @@ export default defineComponent({
       operator: '+',
       rightSide: { value: '', type: ValueType.PLAIN },
       result: '?',
+      isComputed: false,
     });
     const encOperation: Ref<EncryptedOperation> = ref({
       leftSide: { value: '', type: ValueType.PLAIN },
@@ -58,10 +59,8 @@ export default defineComponent({
           [ValueType.PLAIN]: {
             ['+']: {
               [ValueType.PLAIN]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
 
                 this.encOperation.result = String(
                   Number(this.encOperation.leftSide.value) +
@@ -70,13 +69,9 @@ export default defineComponent({
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
                 const p1 = this.leftParameter;
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Plain.add(c2.save(), p1);
                 this.encOperation.result = result.save();
@@ -85,10 +80,8 @@ export default defineComponent({
             },
             ['-']: {
               [ValueType.PLAIN]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
 
                 this.encOperation.result = String(
                   Number(this.encOperation.leftSide.value) -
@@ -97,13 +90,9 @@ export default defineComponent({
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
                 const p1 = this.leftParameter;
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Plain.sub(c2.save(), p1);
                 this.encOperation.result = result.save();
@@ -113,10 +102,8 @@ export default defineComponent({
 
             ['*']: {
               [ValueType.PLAIN]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
 
                 this.encOperation.result = String(
                   Number(this.encOperation.leftSide.value) *
@@ -125,13 +112,9 @@ export default defineComponent({
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
                 const p1 = this.leftParameter;
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Plain.multiply(c2.save(), p1);
                 this.encOperation.result = result.save();
@@ -142,28 +125,18 @@ export default defineComponent({
           [ValueType.CIPHER]: {
             ['+']: {
               [ValueType.PLAIN]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
                 const p2 = this.rightParameter;
 
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
                 this.encOperation.leftSide.value = c1.save();
                 const result = this.easyFHE.Plain.add(c1.save(), p2);
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.leftSide.value = c1.save();
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Cipher.add(c1.save(), c2.save());
@@ -174,28 +147,18 @@ export default defineComponent({
 
             ['-']: {
               [ValueType.PLAIN]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
                 const p2 = this.rightParameter;
 
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
                 this.encOperation.leftSide.value = c1.save();
                 const result = this.easyFHE.Plain.sub(c1.save(), p2);
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.leftSide.value = c1.save();
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Cipher.sub(c1.save(), c2.save());
@@ -206,34 +169,21 @@ export default defineComponent({
 
             ['*']: {
               [ValueType.PLAIN]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
                 const p2 = this.rightParameter;
 
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
                 this.encOperation.leftSide.value = c1.save();
                 const result = this.easyFHE.Plain.multiply(c1.save(), p2);
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.leftSide.value = c1.save();
                 this.encOperation.rightSide.value = c2.save();
-                const result = this.easyFHE.Cipher.multiply(
-                  c1.save(),
-                  c2.save()
-                );
+                const result = this.easyFHE.Cipher.multiply(c1.save(), c2.save());
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
@@ -244,10 +194,8 @@ export default defineComponent({
           [ValueType.PLAIN]: {
             ['+']: {
               [ValueType.PLAIN]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
 
                 this.encOperation.result = String(
                   Number(this.encOperation.leftSide.value) +
@@ -256,13 +204,9 @@ export default defineComponent({
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
                 const p1 = this.leftParameter;
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Plain.add(c2.save(), p1);
                 this.encOperation.result = result.save();
@@ -271,10 +215,8 @@ export default defineComponent({
             },
             ['-']: {
               [ValueType.PLAIN]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
 
                 this.encOperation.result = String(
                   Number(this.encOperation.leftSide.value) -
@@ -283,13 +225,9 @@ export default defineComponent({
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
                 const p1 = this.leftParameter;
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Plain.sub(c2.save(), p1);
                 this.encOperation.result = result.save();
@@ -299,10 +237,8 @@ export default defineComponent({
 
             ['*']: {
               [ValueType.PLAIN]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
 
                 this.encOperation.result = String(
                   Number(this.encOperation.leftSide.value) *
@@ -311,13 +247,9 @@ export default defineComponent({
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
                 const p1 = this.leftParameter;
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Plain.multiply(c2.save(), p1);
                 this.encOperation.result = result.save();
@@ -328,28 +260,18 @@ export default defineComponent({
           [ValueType.CIPHER]: {
             ['+']: {
               [ValueType.PLAIN]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
                 const p2 = this.rightParameter;
 
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
                 this.encOperation.leftSide.value = c1.save();
                 const result = this.easyFHE.Plain.add(c1.save(), p2);
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.leftSide.value = c1.save();
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Cipher.add(c1.save(), c2.save());
@@ -360,28 +282,18 @@ export default defineComponent({
 
             ['-']: {
               [ValueType.PLAIN]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
                 const p2 = this.rightParameter;
 
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
                 this.encOperation.leftSide.value = c1.save();
                 const result = this.easyFHE.Plain.sub(c1.save(), p2);
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.leftSide.value = c1.save();
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Cipher.sub(c1.save(), c2.save());
@@ -392,34 +304,21 @@ export default defineComponent({
 
             ['*']: {
               [ValueType.PLAIN]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
                 const p2 = this.rightParameter;
 
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
                 this.encOperation.leftSide.value = c1.save();
                 const result = this.easyFHE.Plain.multiply(c1.save(), p2);
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.leftSide.value = c1.save();
                 this.encOperation.rightSide.value = c2.save();
-                const result = this.easyFHE.Cipher.multiply(
-                  c1.save(),
-                  c2.save()
-                );
+                const result = this.easyFHE.Cipher.multiply(c1.save(), c2.save());
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
@@ -430,10 +329,8 @@ export default defineComponent({
           [ValueType.PLAIN]: {
             ['+']: {
               [ValueType.PLAIN]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
 
                 this.encOperation.result = String(
                   Number.parseFloat(this.encOperation.leftSide.value) +
@@ -442,13 +339,9 @@ export default defineComponent({
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
                 const p1 = this.leftParameter;
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Plain.add(c2.save(), p1);
                 this.encOperation.result = result.save();
@@ -457,10 +350,8 @@ export default defineComponent({
             },
             ['-']: {
               [ValueType.PLAIN]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
 
                 this.encOperation.result = String(
                   Number.parseFloat(this.encOperation.leftSide.value) -
@@ -469,13 +360,9 @@ export default defineComponent({
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
                 const p1 = this.leftParameter;
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Plain.sub(c2.save(), p1);
                 this.encOperation.result = result.save();
@@ -485,10 +372,8 @@ export default defineComponent({
 
             ['*']: {
               [ValueType.PLAIN]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
 
                 this.encOperation.result = String(
                   Number.parseFloat(this.encOperation.leftSide.value) *
@@ -497,13 +382,9 @@ export default defineComponent({
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                this.encOperation.leftSide.value =
-                  this.operation.leftSide.value;
+                this.encOperation.leftSide.value = this.operation.leftSide.value;
                 const p1 = this.leftParameter;
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Plain.multiply(c2.save(), p1);
                 this.encOperation.result = result.save();
@@ -514,28 +395,18 @@ export default defineComponent({
           [ValueType.CIPHER]: {
             ['+']: {
               [ValueType.PLAIN]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
                 const p2 = this.rightParameter;
 
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
                 this.encOperation.leftSide.value = c1.save();
                 const result = this.easyFHE.Plain.add(c1.save(), p2);
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.leftSide.value = c1.save();
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Cipher.add(c1.save(), c2.save());
@@ -546,28 +417,18 @@ export default defineComponent({
 
             ['-']: {
               [ValueType.PLAIN]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
                 const p2 = this.rightParameter;
 
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
                 this.encOperation.leftSide.value = c1.save();
                 const result = this.easyFHE.Plain.sub(c1.save(), p2);
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.leftSide.value = c1.save();
                 this.encOperation.rightSide.value = c2.save();
                 const result = this.easyFHE.Cipher.sub(c1.save(), c2.save());
@@ -578,34 +439,21 @@ export default defineComponent({
 
             ['*']: {
               [ValueType.PLAIN]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
                 const p2 = this.rightParameter;
 
-                this.encOperation.rightSide.value =
-                  this.operation.rightSide.value;
+                this.encOperation.rightSide.value = this.operation.rightSide.value;
                 this.encOperation.leftSide.value = c1.save();
                 const result = this.easyFHE.Plain.multiply(c1.save(), p2);
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
               [ValueType.CIPHER]: () => {
-                const c1 = this.easyFHE.encrypt(
-                  this.leftParameter,
-                  this.publicKey
-                );
-                const c2 = this.easyFHE.encrypt(
-                  this.rightParameter,
-                  this.publicKey
-                );
+                const c1 = this.easyFHE.encrypt(this.leftParameter, this.publicKey);
+                const c2 = this.easyFHE.encrypt(this.rightParameter, this.publicKey);
                 this.encOperation.leftSide.value = c1.save();
                 this.encOperation.rightSide.value = c2.save();
-                const result = this.easyFHE.Cipher.multiply(
-                  c1.save(),
-                  c2.save()
-                );
+                const result = this.easyFHE.Cipher.multiply(c1.save(), c2.save());
                 this.encOperation.result = result.save();
                 this.encOperation.isComputed = true;
               },
