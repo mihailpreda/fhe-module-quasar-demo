@@ -292,7 +292,7 @@ export default defineComponent({
         },
         yaxis: {
           title: {
-            text: 'Number of code lines',
+            text: 'Lines of Code (LoC)',
             offsetX: 0,
             offsetY: 0,
             style: {
@@ -300,7 +300,13 @@ export default defineComponent({
               fontSize: '16px',
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
-              cssClass: 'apexcharts-xaxis-title',
+              cssClass: 'apexcharts-yaxis-title',
+            },
+          },
+          labels: {
+            formatter: function (val: string) {
+              return `${val} LoC`;
+              // return Number.parseFloat(val).toFixed(0) + ' bytes';
             },
           },
         },
@@ -582,10 +588,12 @@ export default defineComponent({
         dataLabels: {
           enabled: true,
           formatter: function (val: string) {
-            return Number.parseFloat(val).toFixed(0) + ' bytes';
+            return `${(Number.parseFloat(val) / 1024).toFixed(2)} kB`;
+            // return Number.parseFloat(val).toFixed(0) + ' bytes';
           },
           style: {
             fontSize: '2rem',
+            whiteSpace: 'normal',
           },
           dropShadow: {
             enabled: true,
@@ -611,7 +619,7 @@ export default defineComponent({
         },
         yaxis: {
           title: {
-            text: 'Number of code lines',
+            text: 'Size (kilobytes)',
             offsetX: 0,
             offsetY: 0,
             style: {
@@ -620,6 +628,12 @@ export default defineComponent({
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
               cssClass: 'apexcharts-xaxis-title',
+            },
+          },
+          labels: {
+            formatter: function (val: string) {
+              return `${(Number.parseFloat(val) / 1024).toFixed(2)} kB`;
+              // return Number.parseFloat(val).toFixed(0) + ' bytes';
             },
           },
         },
