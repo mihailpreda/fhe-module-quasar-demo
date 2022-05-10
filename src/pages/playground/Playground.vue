@@ -1,6 +1,6 @@
 <template>
   <q-page class="fit column wrap justify-center items-start content-start">
-    <q-page-sticky position="bottom-right" :offset="[250, 100]">
+    <q-page-sticky position="bottom-right" :offset="[250, 100]" :style="{ zIndex: 1 }">
       <q-btn
         class="q-pa-lg"
         round

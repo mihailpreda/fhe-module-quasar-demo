@@ -69,7 +69,7 @@
         </q-card-section>
         <q-separator></q-separator>
         <q-card-section>
-          <div class="text-h5 text-center">Statistics</div>
+          <div class="text-h5 text-center">Metrics</div>
           <q-btn flat icon="mdi-chart-bar" @click="openGraphs">Full screen graphs</q-btn>
           <Graphs :scheme="scheme" />
           <div class="q-ma-sm row">
@@ -78,8 +78,8 @@
               <VueApexCharts
                 type="bar"
                 height="250"
-                :options="chartOptions"
-                :series="series"
+                :options="chartOptionsLoC"
+                :series="seriesLoC"
               ></VueApexCharts>
             </div>
             <div id="speed-chart" class="col">
@@ -87,8 +87,17 @@
               <VueApexCharts
                 type="bar"
                 height="250"
-                :options="chartOptions"
-                :series="series"
+                :options="chartOptionsSpeed"
+                :series="seriesSpeed"
+              ></VueApexCharts>
+            </div>
+            <div id="memory-chart" class="col">
+              <div class="text-center">Memory usage</div>
+              <VueApexCharts
+                type="bar"
+                height="250"
+                :options="chartOptionsMemory"
+                :series="seriesMemory"
               ></VueApexCharts>
             </div>
           </div>
@@ -109,6 +118,7 @@ import Code from './Code.vue';
 import easyFHECodeMixin from './mixins/easyFHE.code.mixin';
 import nodeSealCodeMixin from './mixins/nodeSEAL.code.mixin';
 import Graphs from './Graphs.vue';
+import { EasyScheme, EasySecurity, EasySpeed, EasyPrecision } from 'easyFHE';
 export default defineComponent({
   name: 'CodeComparison',
   components: { Code, VueApexCharts, Graphs },
@@ -121,7 +131,14 @@ export default defineComponent({
   },
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { openCodeComparisonDialog, openGraphsDialog } = storeToRefs(playgroundStore);
+    const {
+      openCodeComparisonDialog,
+      openGraphsDialog,
+      operationSpeedMap,
+      setupSpeedMap,
+      setupMemoryMap,
+      operationMemoryMap,
+    } = storeToRefs(playgroundStore);
     const firstRef = ref<QScrollArea>();
     const secondRef = ref<QScrollArea>();
     let ignoreSource = ref('');
@@ -132,6 +149,10 @@ export default defineComponent({
       firstRef,
       secondRef,
       ignoreSource,
+      operationSpeedMap,
+      setupSpeedMap,
+      setupMemoryMap,
+      operationMemoryMap,
     };
   },
   computed: {
@@ -144,9 +165,14 @@ export default defineComponent({
         total: 0,
       };
       /****************************************************************************/
-      const scheme = this.scheme.scheme.value;
+      const scheme: EasyScheme = this.scheme.scheme.value;
+      const security: EasySecurity = this.scheme.security.value;
+      const speed: EasySpeed = this.scheme.speed.value;
+      const precision: EasyPrecision = this.scheme.precision.value;
       easyFHEStats.setup = this.easyFHESetupHeader.code.length - 3;
       easyFHEStats.deallocations = 3;
+      let easyFHETotalSpeed = 0;
+      let easyFHETotalMemory = 0;
       this.scheme.operations.forEach((op: Operation, index: number) => {
         const codeBlock = this.easyFHECodeMap[scheme][op.leftSide.type][op.operator][
           op.rightSide.type
@@ -160,8 +186,22 @@ export default defineComponent({
         easyFHEStats.commentsAndBlankLines += codeBlock.filter(
           (x) => x.includes('//') || x.trim().length === 0
         ).length;
-      });
 
+        easyFHETotalSpeed +=
+          this.operationSpeedMap.easyFhe[`${scheme}`][security][speed][precision][
+            op.leftSide.type
+          ][op.operator][op.rightSide.type];
+
+        easyFHETotalMemory +=
+          this.operationMemoryMap.easyFhe[`${scheme}`][security][speed][precision][
+            op.leftSide.type
+          ][op.operator][op.rightSide.type];
+      });
+      easyFHETotalSpeed +=
+        this.setupSpeedMap.easyFhe[`${scheme}`][security][speed][precision];
+
+      easyFHETotalMemory +=
+        this.setupMemoryMap.easyFhe[`${scheme}`][security][speed][precision];
       /****************************************************************************/
       const sealStats = {
         setup: 0,
@@ -173,7 +213,8 @@ export default defineComponent({
       /****************************************************************************/
       sealStats.setup = this.nodeSealSetupHeader.code.length - 5;
       sealStats.deallocations = 5;
-
+      let nodeSealTotalSpeed = 0;
+      let nodeSealTotalMemory = 0;
       this.scheme.operations.forEach((op: Operation, index: number) => {
         const codeBlock = this.nodeSealCodeMap[scheme][op.leftSide.type][op.operator][
           op.rightSide.type
@@ -185,20 +226,44 @@ export default defineComponent({
         sealStats.commentsAndBlankLines += codeBlock.filter(
           (x) => x.includes('//') || x.trim().length === 0
         ).length;
+
+        nodeSealTotalSpeed +=
+          this.operationSpeedMap.nodeSeal[`${scheme}`][security][speed][precision][
+            op.leftSide.type
+          ][op.operator][op.rightSide.type];
+
+        nodeSealTotalMemory +=
+          this.operationMemoryMap.nodeSeal[`${scheme}`][security][speed][precision][
+            op.leftSide.type
+          ][op.operator][op.rightSide.type];
       });
+      nodeSealTotalSpeed +=
+        this.setupSpeedMap.nodeSeal[`${scheme}`][security][speed][precision];
+
+      nodeSealTotalMemory +=
+        this.setupMemoryMap.nodeSeal[`${scheme}`][security][speed][precision];
+
       easyFHEStats.total =
         easyFHEStats.setup + easyFHEStats.operations + easyFHEStats.deallocations;
-      //+easyFHEStats.commentsAndBlankLines;
+
       sealStats.total = sealStats.setup + sealStats.operations + sealStats.deallocations;
-      //+sealStats.commentsAndBlankLines;
+
       return {
         stats: {
-          easyFHE: easyFHEStats,
-          seal: sealStats,
+          easyFHE: {
+            loc: easyFHEStats,
+            speed: easyFHETotalSpeed,
+            memory: easyFHETotalMemory,
+          },
+          seal: {
+            loc: sealStats,
+            speed: nodeSealTotalSpeed,
+            memory: nodeSealTotalMemory,
+          },
         },
       };
     },
-    chartOptions() {
+    chartOptionsLoC() {
       return {
         chart: {
           animations: {
@@ -295,45 +360,48 @@ export default defineComponent({
           points: [
             {
               x: 'easyFHE',
-              y: this.code.stats.easyFHE.total + 5,
+              y: this.code.stats.easyFHE.loc.total + 5,
               marker: {
                 size: 0,
               },
               label: {
                 borderColor: '#775DD0',
-                text: `${this.code.stats.easyFHE.total} lines`,
+                text: `${this.code.stats.easyFHE.loc.total} lines`,
               },
             },
             {
               x: 'node-SEAL',
-              y: this.code.stats.seal.total + 5,
+              y: this.code.stats.seal.loc.total + 5,
               marker: {
                 size: 0,
               },
               label: {
                 borderColor: '#775DD0',
-                text: `${this.code.stats.seal.total} lines`,
+                text: `${this.code.stats.seal.loc.total} lines`,
               },
             },
           ],
         },
       };
     },
-    series() {
+    seriesLoC() {
       return [
         {
           name: 'Setup',
-          data: [this.code.stats.easyFHE.setup, this.code.stats.seal.setup],
+          data: [this.code.stats.easyFHE.loc.setup, this.code.stats.seal.loc.setup],
         },
         {
           name: 'Operations',
-          data: [this.code.stats.easyFHE.operations, this.code.stats.seal.operations],
+          data: [
+            this.code.stats.easyFHE.loc.operations,
+            this.code.stats.seal.loc.operations,
+          ],
         },
         {
           name: 'Deallocation',
           data: [
-            this.code.stats.easyFHE.deallocations,
-            this.code.stats.seal.deallocations,
+            this.code.stats.easyFHE.loc.deallocations,
+            this.code.stats.seal.loc.deallocations,
           ],
         },
         // {
@@ -343,6 +411,236 @@ export default defineComponent({
         //     this.code.stats.seal.commentsAndBlankLines,
         //   ],
         // },
+      ];
+    },
+    chartOptionsSpeed() {
+      return {
+        chart: {
+          animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 800,
+            animateGradually: {
+              enabled: true,
+              delay: 250,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 450,
+            },
+          },
+          title: {
+            text: 'libraries',
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+              // color: undefined,
+              fontSize: '16px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 600,
+              cssClass: 'apexcharts-xaxis-title',
+            },
+          },
+          type: 'bar',
+          height: 250,
+          stacked: false,
+          toolbar: {
+            show: true,
+          },
+          zoom: {
+            enabled: true,
+          },
+        },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              legend: {
+                position: 'bottom',
+                offsetX: -10,
+                offsetY: 0,
+              },
+            },
+          },
+        ],
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            borderRadius: 2,
+            distributed: true,
+            dataLabels: {
+              position: 'center', // top, center, bottom
+            },
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val: string) {
+            return Number.parseFloat(val).toFixed(0) + ' ms';
+          },
+        },
+        xaxis: {
+          categories: ['easyFHE', 'node-SEAL'],
+          title: {
+            text: 'libraries',
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+              // color: undefined,
+              fontSize: '16px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 600,
+              cssClass: 'apexcharts-xaxis-title',
+            },
+          },
+        },
+        yaxis: {
+          title: {
+            text: 'Time (milliseconds)',
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+              // color: undefined,
+              fontSize: '16px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 600,
+              cssClass: 'apexcharts-xaxis-title',
+            },
+          },
+          labels: {
+            formatter: function (val: string) {
+              return Number.parseFloat(val).toFixed(0) + ' ms';
+            },
+          },
+        },
+        legend: {
+          position: 'right',
+          horizontalAlign: 'left',
+          offsetY: 40,
+        },
+        fill: {
+          opacity: 1,
+        },
+      };
+    },
+    seriesSpeed() {
+      return [
+        {
+          data: [this.code.stats.easyFHE.speed, this.code.stats.seal.speed],
+        },
+      ];
+    },
+    chartOptionsMemory() {
+      return {
+        chart: {
+          animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 800,
+            animateGradually: {
+              enabled: true,
+              delay: 250,
+            },
+            dynamicAnimation: {
+              enabled: true,
+              speed: 450,
+            },
+          },
+          title: {
+            text: 'libraries',
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+              // color: undefined,
+              fontSize: '16px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 600,
+              cssClass: 'apexcharts-xaxis-title',
+            },
+          },
+          type: 'bar',
+          height: 250,
+          stacked: false,
+          toolbar: {
+            show: true,
+          },
+          zoom: {
+            enabled: true,
+          },
+        },
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              legend: {
+                position: 'bottom',
+                offsetX: -10,
+                offsetY: 0,
+              },
+            },
+          },
+        ],
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            borderRadius: 2,
+            distributed: true,
+            dataLabels: {
+              position: 'center', // top, center, bottom
+            },
+          },
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val: string) {
+            return Number.parseFloat(val).toFixed(0) + ' bytes';
+          },
+        },
+        xaxis: {
+          categories: ['easyFHE', 'node-SEAL'],
+          title: {
+            text: 'libraries',
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+              // color: undefined,
+              fontSize: '16px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 600,
+              cssClass: 'apexcharts-xaxis-title',
+            },
+          },
+        },
+        yaxis: {
+          title: {
+            text: 'Number of code lines',
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+              // color: undefined,
+              fontSize: '16px',
+              fontFamily: 'Helvetica, Arial, sans-serif',
+              fontWeight: 600,
+              cssClass: 'apexcharts-xaxis-title',
+            },
+          },
+        },
+        legend: {
+          position: 'right',
+          horizontalAlign: 'left',
+          offsetY: 40,
+        },
+        fill: {
+          opacity: 1,
+        },
+      };
+    },
+    seriesMemory() {
+      return [
+        {
+          name: 'Setup',
+          data: [this.code.stats.easyFHE.memory, this.code.stats.seal.memory],
+        },
       ];
     },
     thumbStyle(): Partial<CSSStyleDeclaration> {

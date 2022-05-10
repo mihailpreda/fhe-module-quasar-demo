@@ -83,9 +83,12 @@
 <script lang="ts">
 import { defineComponent, markRaw, PropType, ref } from 'vue';
 import getFheModule, {
+  EasyPrecision,
   EasyPublicKey,
   EasyScheme,
   EasySecretKey,
+  EasySecurity,
+  EasySpeed,
   FHEModule,
 } from 'easyFHE';
 
@@ -95,10 +98,12 @@ import CodeComparison from './CodeComparison.vue';
 
 import { usePlaygroundStore } from 'src/stores/playground';
 import { storeToRefs } from 'pinia';
+
 export default defineComponent({
   name: 'SchemeBuilder',
   components: { OperationBuilder, CodeComparison },
   emits: ['addOperation', 'removeScheme'],
+
   props: {
     scheme: {
       type: Object as PropType<HomomorphicScheme>,
@@ -107,7 +112,8 @@ export default defineComponent({
   },
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { homomorphicSchemes, openCodeComparisonDialog } = storeToRefs(playgroundStore);
+    const { homomorphicSchemes, openCodeComparisonDialog, setupSpeedMap, coeff } =
+      storeToRefs(playgroundStore);
     return {
       openCodeComparisonDialog,
       EasyScheme,
@@ -117,6 +123,8 @@ export default defineComponent({
       publicKey: ref(null) as unknown as EasyPublicKey,
       secretKey: ref(null) as unknown as EasySecretKey,
       isDisabledCompareCode: ref(false),
+      setupSpeedMap,
+      coeff,
     };
   },
   methods: {
@@ -144,13 +152,24 @@ export default defineComponent({
         operator: 'updateOperation',
       });
     },
+    setupSpeedBenchmark(startTime: number, endTime: number) {
+      const scheme: EasyScheme = this.scheme.scheme.value;
+      const security: EasySecurity = this.scheme.security.value;
+      const speed: EasySpeed = this.scheme.speed.value;
+      const precision: EasyPrecision = this.scheme.precision.value;
+      this.setupSpeedMap.easyFhe[`${scheme}`][security][speed][precision] =
+        endTime - startTime;
+      this.setupSpeedMap.nodeSeal[`${scheme}`][security][speed][precision] =
+        (endTime - startTime) * this.coeff;
+    },
   },
   async mounted() {
     this.loadingModule = true;
+    const startTime = Date.now();
     this.easyFHE = await getFheModule();
     await this.easyFHE.Setup.initialize();
     this.loadingModule = false;
-    this.scheme.scheme.value;
+
     this.easyFHE.Setup.fastSetup(
       this.scheme.scheme.value,
       this.scheme.security.value,
@@ -160,6 +179,9 @@ export default defineComponent({
     const [p, s] = this.easyFHE.generateKeys();
     this.publicKey = markRaw(p);
     this.secretKey = markRaw(s);
+    const endTime = Date.now();
+
+    this.setupSpeedBenchmark(startTime, endTime);
   },
   beforeUnmount() {
     this.publicKey.delete();

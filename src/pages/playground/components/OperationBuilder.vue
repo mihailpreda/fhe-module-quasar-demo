@@ -190,7 +190,15 @@
 
 <script lang="ts">
 import { defineComponent, PropType, Ref, ref } from 'vue';
-import { EasyPublicKey, EasyScheme, EasySecretKey, FHEModule } from 'easyFHE';
+import {
+  EasyPrecision,
+  EasyPublicKey,
+  EasyScheme,
+  EasySecretKey,
+  EasySecurity,
+  EasySpeed,
+  FHEModule,
+} from 'easyFHE';
 
 import { usePlaygroundStore } from 'src/stores/playground';
 import { storeToRefs } from 'pinia';
@@ -228,7 +236,7 @@ export default defineComponent({
   },
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { homomorphicSchemes } = storeToRefs(playgroundStore);
+    const { homomorphicSchemes, operationSpeedMap, coeff } = storeToRefs(playgroundStore);
 
     const operationsSigns = ['+', '-', '*'];
     const operation: Ref<Operation> = ref({
@@ -254,6 +262,8 @@ export default defineComponent({
       operation,
       encOperation,
       ValueType,
+      operationSpeedMap,
+      coeff,
     };
   },
 
@@ -301,6 +311,26 @@ export default defineComponent({
     delay(miliseconds: number) {
       return new Promise((resolve) => setTimeout(resolve, miliseconds));
     },
+    processingSpeedBenchmark(startTime: number, endTime: number) {
+      const valueTypes = [ValueType.PLAIN, ValueType.CIPHER];
+      const operationsSigns = ['+', '-', '*'];
+      const scheme: EasyScheme = this.scheme.scheme.value;
+      const security: EasySecurity = this.scheme.security.value;
+      const speed: EasySpeed = this.scheme.speed.value;
+      const precision: EasyPrecision = this.scheme.precision.value;
+      for (let leftParamType of valueTypes) {
+        for (let sign of operationsSigns) {
+          for (let rightParamType of valueTypes) {
+            this.operationSpeedMap.easyFhe[`${scheme}`][security][speed][precision][
+              leftParamType
+            ][sign][rightParamType] += endTime - startTime;
+            this.operationSpeedMap.nodeSeal[`${scheme}`][security][speed][precision][
+              leftParamType
+            ][sign][rightParamType] += (endTime - startTime) * this.coeff;
+          }
+        }
+      }
+    },
     compute() {
       this.computingLoading = true;
 
@@ -309,7 +339,10 @@ export default defineComponent({
       const p1: ValueType = this.operation.leftSide.type;
       const op = this.operation.operator;
       const p2: ValueType = this.operation.rightSide.type;
+      const startTime = Date.now();
       this.computationMap[s][p1][op][p2]();
+      const endTime = Date.now();
+      this.processingSpeedBenchmark(startTime, endTime);
       this.operation.isComputed = true;
       this.delay(1000)
         .then(() => {
@@ -326,7 +359,10 @@ export default defineComponent({
       const p1: ValueType = this.operation.leftSide.type;
       const op = this.operation.operator;
       const p2: ValueType = this.operation.rightSide.type;
+      const startTime = Date.now();
       this.decryptionMap[s][p1][op][p2]();
+      const endTime = Date.now();
+      this.processingSpeedBenchmark(startTime, endTime);
     },
   },
 });
