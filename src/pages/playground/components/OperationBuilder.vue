@@ -197,7 +197,7 @@ import {
   EasySecretKey,
   EasySecurity,
   EasySpeed,
-  FHEModule,
+  EasyFHE,
 } from 'easyFHE';
 
 import { usePlaygroundStore } from 'src/stores/playground';
@@ -222,7 +222,7 @@ export default defineComponent({
       required: true,
     },
     easyFHE: {
-      type: Object as PropType<FHEModule>,
+      type: Object as PropType<EasyFHE>,
       required: true,
     },
     publicKey: {

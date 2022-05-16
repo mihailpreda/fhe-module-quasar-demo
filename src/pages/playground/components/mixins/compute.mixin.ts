@@ -1,4 +1,4 @@
-import { EasyPublicKey, EasyScheme, EasySecretKey, FHEModule } from 'easyFHE';
+import { EasyPublicKey, EasyScheme, EasySecretKey, EasyFHE } from 'easyFHE';
 
 import {
   ComputationMap,
@@ -18,7 +18,7 @@ export default defineComponent({
       required: true,
     },
     easyFHE: {
-      type: Object as PropType<FHEModule>,
+      type: Object as PropType<EasyFHE>,
       required: true,
     },
     publicKey: {

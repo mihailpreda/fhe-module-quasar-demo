@@ -82,14 +82,14 @@
 
 <script lang="ts">
 import { defineComponent, markRaw, PropType, ref } from 'vue';
-import getFheModule, {
+import getEasyFHE, {
   EasyPrecision,
   EasyPublicKey,
   EasyScheme,
   EasySecretKey,
   EasySecurity,
   EasySpeed,
-  FHEModule,
+  EasyFHE,
 } from 'easyFHE';
 
 import { HomomorphicScheme, Operation } from 'src/types/models';
@@ -119,7 +119,7 @@ export default defineComponent({
       EasyScheme,
       homomorphicSchemes,
       loadingModule: ref(false),
-      easyFHE: ref(null) as unknown as FHEModule,
+      easyFHE: ref(null) as unknown as EasyFHE,
       publicKey: ref(null) as unknown as EasyPublicKey,
       secretKey: ref(null) as unknown as EasySecretKey,
       isDisabledCompareCode: ref(false),
@@ -166,7 +166,7 @@ export default defineComponent({
   async mounted() {
     this.loadingModule = true;
     const startTime = Date.now();
-    this.easyFHE = await getFheModule();
+    this.easyFHE = await getEasyFHE();
     await this.easyFHE.Setup.initialize();
     this.loadingModule = false;
 
