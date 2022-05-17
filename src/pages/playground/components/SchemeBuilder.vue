@@ -1,45 +1,51 @@
 <template>
   <div class="flex">
-    <q-card class="my-card bg-blue-10 text-white q-ma-lg">
+    <q-card class="my-card bg-blue-10 text-white q-ma-sm">
       <q-card-section>
         <div class="text-h6">{{ scheme.scheme.fullName }}</div>
         <div class="text-subtitle2">
           {{ scheme?.scheme.description }}
         </div>
 
-        <div class="text-subtitle1 q-pa-sm">Parameters</div>
-        <div class="text-subtitle2 elements">
-          <q-list dense class="list-parameters">
-            <q-item>
-              <q-item-section class="icon-avatar" avatar>
-                <q-icon color="white" name="mdi-shield-lock"></q-icon>
-              </q-item-section>
-              <q-item-section>EasySecurity: {{ scheme.security.label }}</q-item-section>
-            </q-item>
+        <div class="text-subtitle1 row">
+          <strong> Parameters</strong>
+          <div class="text-subtitle2 elements">
+            <q-list dense class="list-parameters">
+              <q-item>
+                <q-item-section class="icon-avatar" avatar>
+                  <q-icon color="white" name="mdi-shield-lock"></q-icon>
+                </q-item-section>
+                <q-item-section>EasySecurity: {{ scheme.security.label }}</q-item-section>
+              </q-item>
 
-            <q-item>
-              <q-item-section class="icon-avatar" avatar>
-                <q-icon color="white" name="mdi-circle-slice-5"></q-icon>
-              </q-item-section>
-              <q-item-section>Processing speed: {{ scheme.speed.label }}</q-item-section>
-            </q-item>
-            <q-item v-if="scheme.scheme.value === EasyScheme.CKKS">
-              <q-item-section class="icon-avatar" avatar>
-                <q-icon color="white" name="mdi-chevron-double-up"></q-icon>
-              </q-item-section>
-              <q-item-section>EasyPrecision: {{ scheme.precision.label }}</q-item-section>
-            </q-item>
-          </q-list>
+              <q-item>
+                <q-item-section class="icon-avatar" avatar>
+                  <q-icon color="white" name="mdi-circle-slice-5"></q-icon>
+                </q-item-section>
+                <q-item-section
+                  >Processing speed: {{ scheme.speed.label }}</q-item-section
+                >
+              </q-item>
+              <q-item v-if="scheme.scheme.value === EasyScheme.CKKS">
+                <q-item-section class="icon-avatar" avatar>
+                  <q-icon color="white" name="mdi-chevron-double-up"></q-icon>
+                </q-item-section>
+                <q-item-section
+                  >EasyPrecision: {{ scheme.precision.label }}</q-item-section
+                >
+              </q-item>
+            </q-list>
+          </div>
         </div>
       </q-card-section>
 
       <q-card-section
         class="scroll"
         :style="{
-          height: '680px',
-          width: '1016px',
-          minWidth: '1015px',
-          maxHeight: '430px',
+          height: '580px',
+          width: '900px',
+          minWidth: '900px',
+          maxHeight: '330px',
         }"
       >
         <OperationBuilder

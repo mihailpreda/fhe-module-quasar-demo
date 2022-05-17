@@ -1,10 +1,10 @@
 <template>
-  <q-card class="bg-blue-9 q-pa-md q-ma-md">
+  <q-card class="bg-blue-9 q-mb-sm">
     <q-card-section>
       <q-form @submit="compute">
         <div class="operation-container">
           <div class="grid-operations">
-            <div class="grid-operation q-pa-sm plain-group">
+            <div class="grid-operation plain-group">
               <div class="cipher-plaintext-toggle">
                 Plaintext
                 <q-toggle
@@ -84,7 +84,7 @@
                 readonly
               ></q-input>
 
-              <Transition :duration="550" name="nested">
+              <Transition :duration="200" name="nested">
                 <div v-if="showDecrypted" class="outer">
                   <q-input
                     color="black"
@@ -111,9 +111,9 @@
                 ></q-input>
               </div>
             </div>
-            <Transition :duration="550" name="nested">
+            <Transition :duration="200" name="nested">
               <div v-if="showEncrypted" class="outer">
-                <div class="grid-operation q-pa-sm encrypted-group inner">
+                <div class="grid-operation encrypted-group inner">
                   <q-input
                     color="black"
                     bg-color="white"
@@ -349,7 +349,7 @@ export default defineComponent({
           this.computingLoading = false;
         })
         .then(() => {
-          this.delay(200).then(() => {
+          this.delay(300).then(() => {
             this.showEncrypted = true;
           });
         });
