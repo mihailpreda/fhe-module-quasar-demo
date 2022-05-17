@@ -198,6 +198,28 @@ export default defineComponent({
           },
         },
         {
+          name: 'codeExample',
+          image: {
+            style: {
+              margin: '25px',
+            },
+            height: '100%',
+            width: '100%',
+            fit: 'contain',
+            position: '50% 50%',
+            src: require('/public/slides/gettingStarted/codeExample.png'),
+            'spinner-color': 'white',
+          },
+          description: {
+            center: false,
+            title: 'Usage example',
+            body: '',
+            list: [],
+            body2: '',
+            list2: [],
+          },
+        },
+        {
           name: 'Questions',
           image: {
             style: {
