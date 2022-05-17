@@ -11,10 +11,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/getting-started/GettingStarted.vue'),
       },
       {
-        path: '/components',
-        component: () => import('pages/components/Components.vue'),
-      },
-      {
         path: '/playground',
         component: () => import('pages/playground/Playground.vue'),
       },
