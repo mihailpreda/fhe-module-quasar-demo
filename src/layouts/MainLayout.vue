@@ -12,7 +12,7 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item-label header> Links </q-item-label>
 
         <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
@@ -31,22 +31,22 @@ import EssentialLink from 'components/EssentialLink.vue';
 const linksList = [
   {
     title: 'Home',
-    caption: 'lightweight presentation',
-    icon: 'school',
+    caption: 'Lightweight presentation',
+    icon: 'mdi-presentation',
     to: '/',
     isExternal: false,
   },
   {
     title: 'Getting started',
     caption: 'How to obtain and setup the module',
-    icon: 'code',
+    icon: 'mdi-cog',
     to: '/getting-started',
     isExternal: false,
   },
   {
     title: 'Playground',
     caption: 'Try different homomorphic operations for yourself',
-    icon: 'code',
+    icon: 'mdi-cards-playing',
     to: '/playground',
     isExternal: false,
   },

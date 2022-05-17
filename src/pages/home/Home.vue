@@ -17,9 +17,9 @@
             {{ currentSlide.description.title }}
           </div>
 
-          <q-img v-bind="currentSlide.image"></q-img>
+          <q-img v-bind="currentSlide.image" :style="currentSlide.image.style"></q-img>
 
-          <div class="q-mt-md text-center text-h5">
+          <div class="q-mt-md text-center text-bold text-h5">
             {{ currentSlide.description.body }}
           </div>
           <div class="q-mt-md text-h6">
@@ -54,11 +54,14 @@ export default defineComponent({
         {
           name: 'Home',
           image: {
-            height: '30%',
-            width: '30%',
+            style: {
+              margin: '25px',
+            },
+            height: '50%',
+            width: '50%',
             fit: 'contain',
             position: '50% 50%',
-            src: require('/public/slides/easyFhelogo.png'),
+            src: require('/public/slides/home/easyFhelogo.png'),
             'spinner-color': 'white',
           },
           description: {
@@ -70,11 +73,14 @@ export default defineComponent({
         {
           name: 'How',
           image: {
+            style: {
+              margin: '25px',
+            },
             height: '70%',
             width: '70%',
             fit: 'contain',
             position: '50% 30%',
-            src: require('/public/slides/2slide.drawio.png'),
+            src: require('/public/slides/home/2slide.drawio.png'),
             'spinner-color': 'white',
           },
           description: {
@@ -86,11 +92,14 @@ export default defineComponent({
         {
           name: 'Components',
           image: {
+            style: {
+              margin: '25px',
+            },
             height: '60%',
             width: '60%',
             fit: 'contain',
             position: '50% 50%',
-            src: require('/public/slides/3slide.drawio.png'),
+            src: require('/public/slides/home/3slide.drawio.png'),
             'spinner-color': 'white',
           },
           description: {
@@ -106,11 +115,14 @@ export default defineComponent({
         {
           name: 'EasyFHEFeatures',
           image: {
-            height: '60%',
-            width: '60%',
+            style: {
+              margin: '25px',
+            },
+            height: '40%',
+            width: '40%',
             fit: 'contain',
             position: '50% 50%',
-            src: require('/public/slides/7slide.drawio.png'),
+            src: require('/public/slides/home/7slide.drawio.png'),
             'spinner-color': 'white',
           },
           description: {
@@ -127,11 +139,14 @@ export default defineComponent({
         {
           name: 'SetupFeatures',
           image: {
-            height: '60%',
-            width: '60%',
+            style: {
+              margin: '25px',
+            },
+            height: '40%',
+            width: '40%',
             fit: 'contain',
             position: '50% 50%',
-            src: require('/public/slides/4slide.drawio.png'),
+            src: require('/public/slides/home/4slide.drawio.png'),
             'spinner-color': 'white',
           },
           description: {
@@ -148,11 +163,14 @@ export default defineComponent({
         {
           name: 'PlainFeatures',
           image: {
-            height: '60%',
-            width: '60%',
+            style: {
+              margin: '25px',
+            },
+            height: '40%',
+            width: '40%',
             fit: 'contain',
             position: '50% 50%',
-            src: require('/public/slides/5slide.drawio.png'),
+            src: require('/public/slides/home/5slide.drawio.png'),
             'spinner-color': 'white',
           },
           description: {
@@ -168,11 +186,14 @@ export default defineComponent({
         {
           name: 'CipherFeatures',
           image: {
-            height: '60%',
-            width: '60%',
+            style: {
+              margin: '25px',
+            },
+            height: '40%',
+            width: '40%',
             fit: 'contain',
             position: '50% 50%',
-            src: require('/public/slides/6slide.drawio.png'),
+            src: require('/public/slides/home/6slide.drawio.png'),
             'spinner-color': 'white',
           },
           description: {
@@ -185,6 +206,29 @@ export default defineComponent({
               'square() - Squares a ciphertext',
               'exponentiate() - Applying exponentiation on a ciphertext',
               'negate() - Flip the ciphertext values',
+            ],
+          },
+        },
+        {
+          name: 'Questions',
+          image: {
+            style: {
+              margin: '25px',
+            },
+            height: '40%',
+            width: '40%',
+            fit: 'contain',
+            position: '50% 50%',
+            src: require('/public/slides/home/8slide.drawio.png'),
+            'spinner-color': 'white',
+          },
+          description: {
+            title: 'Questions',
+            body: 'Preda Mihail Irinel',
+            list: [
+              'mihaipreda1997@gmail.com',
+              'github.com/mihailpreda/',
+              'linkedin.com/in/mihail-irinel-preda/',
             ],
           },
         },
