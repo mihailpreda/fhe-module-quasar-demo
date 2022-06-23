@@ -54,7 +54,7 @@ const linksList = [
     title: 'Github',
     caption: 'github.com/mihailpreda',
     icon: 'code',
-    link: 'https://github.com/mihailpreda/fhe-module-typescript-wrapper',
+    link: 'https://github.com/mihailpreda/easyFHE',
     isExternal: true,
   },
 ];
