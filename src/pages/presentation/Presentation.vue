@@ -1,6 +1,6 @@
 <template>
   <q-page class="fit column wrap items-start content-start">
-    <vue-pdf-embed ref="pdfRef" :source="source1" :width="pdfWidth" :height="pdfHeight" />
+    <vue-pdf-embed ref="pdfRef" :source="source1" :width="width" :height="height" />
   </q-page>
 </template>
 
@@ -9,7 +9,8 @@ import { onMounted, ref } from 'vue';
 import VuePdfEmbed from 'vue-pdf-embed';
 import { usePlaygroundStore } from 'src/stores/playground';
 import { storeToRefs } from 'pinia';
-
+import { useWindowSize } from 'vue-window-size';
+const { width, height } = useWindowSize();
 const pdfRef = ref<typeof VuePdfEmbed>();
 const source1 = ref(
   new URL(
@@ -18,26 +19,12 @@ const source1 = ref(
   )
 );
 
-const pdfWidth = ref(1920);
-const pdfHeight = ref(1080);
-
-// const myEventHandler = (e: Event) => {
-//   const lol: Window = e.target as Window;
-//   pdfWidth.value = lol.innerWidth;
-//   pdfHeight.value = lol.innerHeight;
-// };
-
 const playgroundStore = usePlaygroundStore();
 const { leftDrawerOpen } = storeToRefs(playgroundStore);
+
 onMounted(() => {
   leftDrawerOpen.value = false;
 });
-
-// window.addEventListener('resize', myEventHandler);
-
-// onUnmounted(() => {
-//   window.removeEventListener('resize', myEventHandler);
-// });
 </script>
 <style lang="scss" scoped>
 .new-operation {
