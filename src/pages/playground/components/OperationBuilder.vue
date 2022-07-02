@@ -1,5 +1,5 @@
 <template>
-  <q-card class="bg-blue-9 q-mb-sm">
+  <q-card class="bg-grey-8 q-mb-sm">
     <q-card-section>
       <q-form @submit="compute">
         <div class="operation-container">
@@ -10,7 +10,7 @@
                 <q-toggle
                   v-model="operation.leftSide.type"
                   checked-icon="check"
-                  color="red"
+                  color="grey-5"
                   :false-value="ValueType.PLAIN"
                   :true-value="ValueType.CIPHER"
                   keep-color
@@ -26,7 +26,7 @@
                 <q-toggle
                   v-model="operation.rightSide.type"
                   checked-icon="check"
-                  color="red"
+                  color="grey-5"
                   :false-value="ValueType.PLAIN"
                   :true-value="ValueType.CIPHER"
                   keep-color
@@ -181,10 +181,10 @@
       </q-form>
       <q-inner-loading
         :showing="computingLoading"
-        :label-style="{ fontSize: '1.5rem', color: '#1976D2' }"
+        :label-style="{ fontSize: '1.5rem', color: 'black' }"
       >
-        <q-spinner-gears size="50px" color="blue-10"></q-spinner-gears>
-        <span :style="{ fontSize: '1.5rem', color: '#1976D2' }"> Computing.... </span>
+        <q-spinner-gears size="50px" color="black"></q-spinner-gears>
+        <span :style="{ fontSize: '1.5rem', color: 'black' }"> Computing.... </span>
       </q-inner-loading>
     </q-card-section>
   </q-card>

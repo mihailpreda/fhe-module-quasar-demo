@@ -10,6 +10,7 @@ import VuePdfEmbed from 'vue-pdf-embed';
 import { usePlaygroundStore } from 'src/stores/playground';
 import { storeToRefs } from 'pinia';
 import { useWindowSize } from 'vue-window-size';
+
 const { width, height } = useWindowSize();
 const pdfRef = ref<typeof VuePdfEmbed>();
 const source1 = ref(
@@ -29,11 +30,5 @@ onMounted(() => {
 <style lang="scss" scoped>
 .new-operation {
   height: 200px;
-}
-
-.pdf-viewer > div > canvas {
-  height: 100% !important;
-  width: 100% !important;
-  background-color: red;
 }
 </style>

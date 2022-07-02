@@ -1,8 +1,8 @@
 <template>
   <q-page class="fit column wrap items-start content-start">
-    <q-page-sticky position="bottom-right" :offset="[250, 100]" :style="{ zIndex: 1 }">
+    <q-page-sticky position="bottom-right" :offset="[100, 100]" :style="{ zIndex: 1 }">
       <q-btn
-        class="q-pa-lg"
+        class="q-pa-sm"
         round
         color="primary"
         icon="add"

@@ -1,6 +1,6 @@
 <template>
   <div class="flex">
-    <q-card class="my-card bg-blue-10 text-white q-ma-sm">
+    <q-card class="my-card bg-grey-9 text-white q-ma-sm">
       <q-card-section>
         <div class="text-h6">{{ scheme.scheme.fullName }}</div>
         <div class="text-subtitle2">
@@ -74,10 +74,10 @@
       </q-card-actions>
       <q-inner-loading
         :showing="loadingModule"
-        :label-style="{ fontSize: '1.5rem', color: '#1976D2' }"
+        :label-style="{ fontSize: '1.5rem', color: 'black' }"
       >
-        <q-spinner-gears size="50px" color="blue-10"></q-spinner-gears>
-        <span :style="{ fontSize: '1.5rem', color: '#1976D2' }">
+        <q-spinner-gears size="50px" color="black"></q-spinner-gears>
+        <span :style="{ fontSize: '1.5rem', color: 'black' }">
           Initializing module....
         </span>
       </q-inner-loading>

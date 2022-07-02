@@ -1,11 +1,4 @@
 <template>
-  <q-page-sticky position="bottom-right" :offset="[30, 20]">
-    <q-btn class="q-pa-sm copy-btn" round color="blue-10" icon="mdi-content-copy">
-      <q-tooltip :offset="[0, 10]" class="bg-blue-8 q-ma-sm text-white">
-        Copy code
-      </q-tooltip>
-    </q-btn>
-  </q-page-sticky>
   <div class="code-container">
     <div v-for="(line, index) in code" :key="index" class="code-lines-container">
       <div class="line-number">{{ index + 1 }}</div>
