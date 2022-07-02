@@ -61,7 +61,7 @@ const linksList = [
     title: 'Presentation - extern',
     caption: 'Try different homomorphic operations for yourself',
     icon: 'mdi-presentation',
-    link: './../../public/pdf/Prezentare PREDA Mihail Irinel - EasyFHE.pdf',
+    link: 'https://github.com/mihailpreda/fhe-module-quasar-demo/raw/master/public/pdf/Prezentare%20PREDA%20Mihail%20Irinel%20-%20EasyFHE.pdf',
     isExternal: true,
   },
   {
