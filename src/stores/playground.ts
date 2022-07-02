@@ -24,9 +24,11 @@ interface PlaygroundStoreState {
   setupSpeedMap: SetupSpeedMap;
   operationMemoryMap: OperationMemoryMap;
   setupMemoryMap: SetupMemoryMap;
+  leftDrawerOpen: boolean;
 }
 
 const PlaygroundStoreState: PlaygroundStoreState = {
+  leftDrawerOpen: false,
   schemeID: 0,
   homomorphicSchemes: [],
   openDialog: false,

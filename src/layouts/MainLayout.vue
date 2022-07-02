@@ -6,7 +6,7 @@
 
         <q-toolbar-title> EasyFHE Library </q-toolbar-title>
 
-        <div>EasyFHE v0.8.2</div>
+        <div>EasyFHE v0.9.0</div>
       </q-toolbar>
     </q-header>
 
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 
 const linksList = [
@@ -51,6 +51,20 @@ const linksList = [
     isExternal: false,
   },
   {
+    title: 'Presentation',
+    caption: 'Try different homomorphic operations for yourself',
+    icon: 'mdi-presentation',
+    to: '/presentation',
+    isExternal: false,
+  },
+  {
+    title: 'Presentation - extern',
+    caption: 'Try different homomorphic operations for yourself',
+    icon: 'mdi-presentation',
+    link: './../../public/pdf/Prezentare PREDA Mihail Irinel - EasyFHE.pdf',
+    isExternal: true,
+  },
+  {
     title: 'Github',
     caption: 'github.com/mihailpreda',
     icon: 'code',
@@ -58,7 +72,8 @@ const linksList = [
     isExternal: true,
   },
 ];
-
+import { usePlaygroundStore } from 'src/stores/playground';
+import { storeToRefs } from 'pinia';
 export default defineComponent({
   name: 'MainLayout',
 
@@ -67,7 +82,8 @@ export default defineComponent({
   },
 
   setup() {
-    const leftDrawerOpen = ref(false);
+    const playgroundStore = usePlaygroundStore();
+    const { leftDrawerOpen } = storeToRefs(playgroundStore);
 
     return {
       essentialLinks: linksList,

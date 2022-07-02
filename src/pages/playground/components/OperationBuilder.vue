@@ -16,6 +16,7 @@
                   keep-color
                   unchecked-icon="clear"
                   :readonly="encOperation.isComputed"
+                  :disable="encOperation.isComputed"
                   label="Ciphertext"
                 ></q-toggle>
               </div>
@@ -31,6 +32,7 @@
                   keep-color
                   unchecked-icon="clear"
                   :readonly="encOperation.isComputed"
+                  :disable="encOperation.isComputed"
                   label="Ciphertext"
                 ></q-toggle>
               </div>
