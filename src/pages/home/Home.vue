@@ -1,52 +1,72 @@
 <template>
   <q-page class="fit column wrap items-start content-start">
-    <vue-pdf-embed
-      ref="pdfRef"
-      :source="source1"
-      :width="width"
-      :height="height"
-      @rendered="renderFailed"
-      @loaded="loadedPDF"
-      @loading-failed="loadingFailed"
-    />
+    <div class="fit q-pa-md">
+      <VuePdf
+        v-for="page in numOfPages"
+        :key="page"
+        :src="pdfSrc"
+        :page="page"
+        :enableTextSelection="true"
+        :enableAnnotations="true"
+      />
+    </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import VuePdfEmbed from 'vue-pdf-embed';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { VuePdf, createLoadingTask } from 'vue3-pdfjs/esm';
+import { VuePdfPropsType } from 'vue3-pdfjs/components/vue-pdf/vue-pdf-props'; // Prop type definitions can also be imported
+import { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api';
 import { usePlaygroundStore } from 'src/stores/playground';
 import { storeToRefs } from 'pinia';
-import { useWindowSize } from 'vue-window-size';
+import { Loading, QSpinnerGears } from 'quasar';
 
-const { width, height } = useWindowSize();
-const pdfRef = ref<typeof VuePdfEmbed>();
-const source1 = ref(
+const pdfSrc = ref<VuePdfPropsType['src']>(
   new URL(
     './../../../public/pdf/Prezentare PREDA Mihail Irinel - EasyFHE.pdf',
     import.meta.url
-  )
+  ).href
 );
+const numOfPages = ref(0);
 
 const playgroundStore = usePlaygroundStore();
 const { leftDrawerOpen } = storeToRefs(playgroundStore);
-
-const renderFailed = () => {
-  console.log('rendered home');
+const timer = ref();
+const delay = ref();
+const showLoading = (displayedTime: number) => {
+  Loading.show({
+    spinner: QSpinnerGears,
+    message: 'Loading presentation...',
+    customClass: 'home-loading',
+  });
+  timer.value = setTimeout(() => {
+    Loading.hide();
+    timer.value = void 0;
+  }, displayedTime);
 };
 
-const loadedPDF = (e) => {
-  console.log(e);
-};
-const loadingFailed = () => {
-  console.log('failed loading');
-};
 onMounted(() => {
   leftDrawerOpen.value = false;
+  showLoading(2000);
+  delay.value = setTimeout(() => {
+    const loadingTask = createLoadingTask(pdfSrc.value);
+    loadingTask.promise.then((pdf: PDFDocumentProxy) => {
+      numOfPages.value = pdf.numPages;
+    });
+  }, 300);
+});
+onUnmounted(() => {
+  if (timer.value !== void 0) {
+    clearTimeout(timer.value);
+    clearTimeout(delay.value);
+    Loading.hide();
+  }
 });
 </script>
-<style lang="scss" scoped>
-.new-operation {
-  height: 200px;
+<style lang="scss">
+.home-loading > .q-loading__backdrop {
+  opacity: 1;
+  background-color: $grey-6;
 }
 </style>
