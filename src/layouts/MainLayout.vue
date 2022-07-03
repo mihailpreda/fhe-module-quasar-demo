@@ -6,7 +6,7 @@
 
         <q-toolbar-title> EasyFHE Library </q-toolbar-title>
 
-        <div>EasyFHE v0.9.0</div>
+        <div>EasyFHE v1.0.0</div>
       </q-toolbar>
     </q-header>
 
@@ -50,25 +50,39 @@ const linksList = [
     to: '/playground',
     isExternal: false,
   },
-  // {
-  //   title: 'Presentation',
-  //   caption: 'Try different homomorphic operations for yourself',
-  //   icon: 'mdi-presentation',
-  //   to: '/presentation',
-  //   isExternal: false,
-  // },
   {
-    title: 'Download Presentation',
+    title: 'Download presentation',
     caption: 'Have the presentation saved locally',
     icon: 'mdi-download',
     link: 'https://github.com/mihailpreda/fhe-module-quasar-demo/raw/master/public/pdf/Prezentare%20PREDA%20Mihail%20Irinel%20-%20EasyFHE.pdf',
     isExternal: true,
   },
   {
-    title: 'Github',
-    caption: 'github.com/mihailpreda',
+    title: 'Download installation guide',
+    caption: 'Have the getting started guide saved locally',
+    icon: 'mdi-download',
+    link: 'https://github.com/mihailpreda/fhe-module-quasar-demo/raw/a14357efe7cfd7ef721c5ff50b509e65f3a79537/public/pdf/Prezentare%20PREDA%20Mihail%20Irinel%20-%20EasyFHE%20-%20Getting%20Started%20v2.pdf',
+    isExternal: true,
+  },
+  {
+    title: 'Source code',
+    caption: 'EasyFHE source code repository',
     icon: 'code',
     link: 'https://github.com/mihailpreda/easyFHE',
+    isExternal: true,
+  },
+  {
+    title: 'LinkedIn',
+    caption: 'Profile',
+    icon: 'mdi-linkedin',
+    link: 'https://www.linkedin.com/in/mihail-irinel-preda/',
+    isExternal: true,
+  },
+  {
+    title: 'Github',
+    caption: 'account',
+    icon: 'mdi-github',
+    link: 'https://github.com/mihailpreda',
     isExternal: true,
   },
 ];

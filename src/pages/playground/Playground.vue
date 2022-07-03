@@ -1,6 +1,6 @@
 <template>
-  <q-page class="fit column wrap items-start content-start">
-    <q-page-sticky position="bottom-right" :offset="[100, 100]" :style="{ zIndex: 1 }">
+  <q-page class="fit column wrap justify-center items-center">
+    <q-page-sticky position="top-right" :offset="[15, 15]" :style="{ zIndex: 1 }">
       <q-btn
         class="q-pa-sm"
         round
@@ -36,10 +36,12 @@ export default defineComponent({
   components: { AddScheme, SchemeBuilder },
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { homomorphicSchemes, openDialog } = storeToRefs(playgroundStore);
+    const { homomorphicSchemes, openDialog, leftDrawerOpen } =
+      storeToRefs(playgroundStore);
     return {
       homomorphicSchemes,
       openDialog,
+      leftDrawerOpen,
     };
   },
   methods: {
@@ -55,6 +57,12 @@ export default defineComponent({
     openAddDialog() {
       this.openDialog = true;
     },
+  },
+  mounted() {
+    this.leftDrawerOpen = false;
+  },
+  unmounted() {
+    this.homomorphicSchemes = [];
   },
 });
 </script>
