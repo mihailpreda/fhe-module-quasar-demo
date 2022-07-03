@@ -19,7 +19,7 @@ interface PlaygroundStoreState {
   openCodeComparisonDialog: boolean;
   openGraphsDialog: boolean;
   percentage: number;
-  coeff: number;
+  time: number;
   operationSpeedMap: OperationSpeedMap;
   setupSpeedMap: SetupSpeedMap;
   operationMemoryMap: OperationMemoryMap;
@@ -35,7 +35,7 @@ const PlaygroundStoreState: PlaygroundStoreState = {
   openCodeComparisonDialog: false,
   openGraphsDialog: false,
   percentage: 7,
-  coeff: 1 - Math.floor(Math.random() * 9) / 100,
+  time: 1 - Math.floor(Math.random() * 9) / 100,
   operationSpeedMap: {
     easyFhe: {
       [`${EasyScheme.BFV}`]: {

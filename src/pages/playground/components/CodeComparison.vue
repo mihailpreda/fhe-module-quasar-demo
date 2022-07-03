@@ -34,7 +34,7 @@
         <q-card-section>
           <div class="row no-wrap">
             <div class="col easy-FHE">
-              <div class="text-subtitle1 text-center q-pb-md">easyFHE</div>
+              <div class="text-subtitle1 text-center q-pb-md">EasyFHE</div>
 
               <q-scroll-area
                 visible
@@ -50,7 +50,7 @@
               </q-scroll-area>
             </div>
             <div class="col node-SEAL">
-              <div class="text-subtitle1 text-center q-pb-md">node-seal</div>
+              <div class="text-subtitle1 text-center q-pb-md">node-SEAL</div>
 
               <q-scroll-area
                 visible
@@ -322,7 +322,7 @@ export default defineComponent({
           },
         },
         xaxis: {
-          categories: ['easyFHE', 'node-SEAL'],
+          categories: ['EasyFHE', 'node-SEAL'],
           title: {
             text: 'libraries',
             offsetX: 0,
@@ -349,7 +349,7 @@ export default defineComponent({
           },
           labels: {
             formatter: function (val: string) {
-              return Number.parseFloat(val).toFixed(0) + ' lines';
+              return Number.parseFloat(val).toFixed(0) + ' LoC';
             },
           },
         },
@@ -363,28 +363,28 @@ export default defineComponent({
         },
         annotations: {
           points: [
-            {
-              x: 'easyFHE',
-              y: this.code.stats.easyFHE.loc.total + 5,
-              marker: {
-                size: 0,
-              },
-              label: {
-                borderColor: '#775DD0',
-                text: `${this.code.stats.easyFHE.loc.total} lines`,
-              },
-            },
-            {
-              x: 'node-SEAL',
-              y: this.code.stats.seal.loc.total + 5,
-              marker: {
-                size: 0,
-              },
-              label: {
-                borderColor: '#775DD0',
-                text: `${this.code.stats.seal.loc.total} lines`,
-              },
-            },
+            // {
+            //   x: 'EasyFHE',
+            //   y: this.code.stats.easyFHE.loc.total + 5,
+            //   marker: {
+            //     size: 0,
+            //   },
+            //   label: {
+            //     borderColor: '#775DD0',
+            //     text: `${this.code.stats.easyFHE.loc.total} lines`,
+            //   },
+            // },
+            // {
+            //   x: 'node-SEAL',
+            //   y: this.code.stats.seal.loc.total + 5,
+            //   marker: {
+            //     size: 0,
+            //   },
+            //   label: {
+            //     borderColor: '#775DD0',
+            //     text: `${this.code.stats.seal.loc.total} lines`,
+            //   },
+            // },
           ],
         },
         dataLabels: {
@@ -560,7 +560,7 @@ export default defineComponent({
           name: 'Processing time',
           data: [
             {
-              x: 'easyFHE',
+              x: 'EasyFHE',
               y: this.code.stats.easyFHE.speed,
             },
             {
@@ -700,7 +700,7 @@ export default defineComponent({
           name: 'Used memory',
           data: [
             {
-              x: 'easyFHE',
+              x: 'EasyFHE',
               y: this.code.stats.easyFHE.memory,
             },
             {

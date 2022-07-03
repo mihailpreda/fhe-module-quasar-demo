@@ -24,7 +24,7 @@ import { Loading, QSpinnerGears } from 'quasar';
 
 const pdfSrc = ref<VuePdfPropsType['src']>(
   new URL(
-    './../../../public/pdf/Prezentare PREDA Mihail Irinel - EasyFHE - Getting Started v2.pdf',
+    './../../../public/pdf/Prezentare PREDA Mihail Irinel - EasyFHE - Getting Started.pdf',
     import.meta.url
   ).href
 );

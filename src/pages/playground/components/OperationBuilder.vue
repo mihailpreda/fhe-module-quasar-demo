@@ -238,7 +238,7 @@ export default defineComponent({
   },
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { homomorphicSchemes, operationSpeedMap, coeff } = storeToRefs(playgroundStore);
+    const { homomorphicSchemes, operationSpeedMap, time } = storeToRefs(playgroundStore);
 
     const operationsSigns = ['+', '-', '*'];
     const operation: Ref<Operation> = ref({
@@ -265,7 +265,7 @@ export default defineComponent({
       encOperation,
       ValueType,
       operationSpeedMap,
-      coeff,
+      time,
     };
   },
 
@@ -328,7 +328,7 @@ export default defineComponent({
             ][sign][rightParamType] += endTime - startTime;
             this.operationSpeedMap.nodeSeal[`${scheme}`][security][speed][precision][
               leftParamType
-            ][sign][rightParamType] += (endTime - startTime) * this.coeff;
+            ][sign][rightParamType] += (endTime - startTime) * this.time;
           }
         }
       }

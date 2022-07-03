@@ -278,7 +278,7 @@ export default defineComponent({
           },
         },
         xaxis: {
-          categories: ['easyFHE', 'node-SEAL'],
+          categories: ['EasyFHE', 'node-SEAL'],
           title: {
             text: 'libraries',
             offsetX: 0,
@@ -337,7 +337,7 @@ export default defineComponent({
         annotations: {
           points: [
             {
-              x: 'easyFHE',
+              x: 'EasyFHE',
               y: this.code.stats.easyFHE.loc.total,
               marker: {
                 size: 0,
@@ -525,7 +525,7 @@ export default defineComponent({
           name: 'Processing time',
           data: [
             {
-              x: 'easyFHE',
+              x: 'EasyFHE',
               y: this.code.stats.easyFHE.speed,
             },
             {
@@ -665,7 +665,7 @@ export default defineComponent({
           name: 'Used memory',
           data: [
             {
-              x: 'easyFHE',
+              x: 'EasyFHE',
               y: this.code.stats.easyFHE.memory,
             },
             {

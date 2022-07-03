@@ -118,7 +118,7 @@ export default defineComponent({
   },
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { homomorphicSchemes, openCodeComparisonDialog, setupSpeedMap, coeff } =
+    const { homomorphicSchemes, openCodeComparisonDialog, setupSpeedMap, time } =
       storeToRefs(playgroundStore);
     return {
       openCodeComparisonDialog,
@@ -130,7 +130,7 @@ export default defineComponent({
       secretKey: ref(null) as unknown as EasySecretKey,
       isDisabledCompareCode: ref(false),
       setupSpeedMap,
-      coeff,
+      time,
     };
   },
   methods: {
@@ -166,7 +166,7 @@ export default defineComponent({
       this.setupSpeedMap.easyFhe[`${scheme}`][security][speed][precision] =
         endTime - startTime;
       this.setupSpeedMap.nodeSeal[`${scheme}`][security][speed][precision] =
-        (endTime - startTime) * this.coeff;
+        (endTime - startTime) * this.time;
     },
   },
   async mounted() {
