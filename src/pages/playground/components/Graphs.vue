@@ -83,6 +83,9 @@ import VueApexCharts from 'vue3-apexcharts';
 import easyFHECodeMixin from './mixins/easyFHE.code.mixin';
 import nodeSealCodeMixin from './mixins/nodeSEAL.code.mixin';
 import { EasyScheme, EasySecurity, EasySpeed, EasyPrecision } from 'easyFHE';
+const lightGrey = '#121212';
+const normalGrey = '#424242';
+const darkerGrey = '#727272';
 export default defineComponent({
   name: 'CodeComparison',
   components: { VueApexCharts },
@@ -241,7 +244,6 @@ export default defineComponent({
             offsetX: 0,
             offsetY: 0,
             style: {
-              // color: undefined,
               fontSize: '16px',
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
@@ -282,7 +284,6 @@ export default defineComponent({
             offsetX: 0,
             offsetY: 0,
             style: {
-              // color: undefined,
               fontSize: '16px',
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
@@ -296,7 +297,6 @@ export default defineComponent({
             offsetX: 0,
             offsetY: 0,
             style: {
-              // color: undefined,
               fontSize: '16px',
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
@@ -305,8 +305,7 @@ export default defineComponent({
           },
           labels: {
             formatter: function (val: string) {
-              return `${val} LoC`;
-              // return Number.parseFloat(val).toFixed(0) + ' bytes';
+              return Number.parseFloat(val).toFixed(0) + ' lines';
             },
           },
         },
@@ -324,7 +323,8 @@ export default defineComponent({
             return Number.parseFloat(val).toFixed(0);
           },
           style: {
-            fontSize: '1.5rem',
+            fontSize: '1.5vw',
+            whiteSpace: 'normal',
             colors: ['#FFF'],
           },
           dropShadow: {
@@ -376,6 +376,7 @@ export default defineComponent({
         {
           name: 'Setup',
           data: [this.code.stats.easyFHE.loc.setup, this.code.stats.seal.loc.setup],
+          color: lightGrey,
         },
         {
           name: 'Operations',
@@ -383,6 +384,7 @@ export default defineComponent({
             this.code.stats.easyFHE.loc.operations,
             this.code.stats.seal.loc.operations,
           ],
+          color: normalGrey,
         },
         {
           name: 'Deallocation',
@@ -390,18 +392,16 @@ export default defineComponent({
             this.code.stats.easyFHE.loc.deallocations,
             this.code.stats.seal.loc.deallocations,
           ],
+          color: darkerGrey,
         },
-        // {
-        //   name: 'Comments & blank lines',
-        //   data: [
-        //     this.code.stats.easyFHE.commentsAndBlankLines,
-        //     this.code.stats.seal.commentsAndBlankLines,
-        //   ],
-        // },
       ];
     },
     chartOptionsSpeed() {
       return {
+        stroke: {
+          colors: ['transparent'],
+          width: 10,
+        },
         chart: {
           animations: {
             enabled: true,
@@ -460,13 +460,15 @@ export default defineComponent({
             },
           },
         },
+        colors: [lightGrey, darkerGrey],
         dataLabels: {
           enabled: true,
           formatter: function (val: string) {
             return Number.parseFloat(val).toFixed(2) + ' ms';
           },
           style: {
-            fontSize: '2rem',
+            fontSize: '3vw',
+            whiteSpace: 'normal',
           },
           dropShadow: {
             enabled: true,
@@ -476,13 +478,11 @@ export default defineComponent({
           },
         },
         xaxis: {
-          categories: ['easyFHE', 'node-SEAL'],
           title: {
             text: 'libraries',
             offsetX: 0,
             offsetY: 0,
             style: {
-              // color: undefined,
               fontSize: '16px',
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
@@ -496,7 +496,6 @@ export default defineComponent({
             offsetX: 0,
             offsetY: 0,
             style: {
-              // color: undefined,
               fontSize: '16px',
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
@@ -513,6 +512,7 @@ export default defineComponent({
           position: 'right',
           horizontalAlign: 'left',
           offsetY: 40,
+          showForSingleSeries: true,
         },
         fill: {
           opacity: 1,
@@ -522,12 +522,26 @@ export default defineComponent({
     seriesSpeed() {
       return [
         {
-          data: [this.code.stats.easyFHE.speed, this.code.stats.seal.speed],
+          name: 'Processing time',
+          data: [
+            {
+              x: 'easyFHE',
+              y: this.code.stats.easyFHE.speed,
+            },
+            {
+              x: 'node-SEAL',
+              y: this.code.stats.seal.speed,
+            },
+          ],
         },
       ];
     },
     chartOptionsMemory() {
       return {
+        stroke: {
+          colors: ['transparent'],
+          width: 10,
+        },
         chart: {
           animations: {
             enabled: true,
@@ -547,7 +561,6 @@ export default defineComponent({
             offsetX: 0,
             offsetY: 0,
             style: {
-              // color: undefined,
               fontSize: '16px',
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
@@ -585,6 +598,7 @@ export default defineComponent({
             },
           },
         },
+        colors: [lightGrey, darkerGrey],
         dataLabels: {
           enabled: true,
           formatter: function (val: string) {
@@ -592,7 +606,7 @@ export default defineComponent({
             // return Number.parseFloat(val).toFixed(0) + ' bytes';
           },
           style: {
-            fontSize: '2rem',
+            fontSize: '3vw',
             whiteSpace: 'normal',
           },
           dropShadow: {
@@ -603,13 +617,11 @@ export default defineComponent({
           },
         },
         xaxis: {
-          categories: ['easyFHE', 'node-SEAL'],
           title: {
             text: 'libraries',
             offsetX: 0,
             offsetY: 0,
             style: {
-              // color: undefined,
               fontSize: '16px',
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
@@ -623,7 +635,6 @@ export default defineComponent({
             offsetX: 0,
             offsetY: 0,
             style: {
-              // color: undefined,
               fontSize: '16px',
               fontFamily: 'Helvetica, Arial, sans-serif',
               fontWeight: 600,
@@ -641,6 +652,7 @@ export default defineComponent({
           position: 'right',
           horizontalAlign: 'left',
           offsetY: 40,
+          showForSingleSeries: true,
         },
         fill: {
           opacity: 1,
@@ -650,8 +662,17 @@ export default defineComponent({
     seriesMemory() {
       return [
         {
-          name: 'Setup',
-          data: [this.code.stats.easyFHE.memory, this.code.stats.seal.memory],
+          name: 'Used memory',
+          data: [
+            {
+              x: 'easyFHE',
+              y: this.code.stats.easyFHE.memory,
+            },
+            {
+              x: 'node-SEAL',
+              y: this.code.stats.seal.memory,
+            },
+          ],
         },
       ];
     },
