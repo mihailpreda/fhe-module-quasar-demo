@@ -1,9 +1,5 @@
 <template>
-  <q-dialog
-    v-model="openDialog"
-    transition-show="rotate"
-    transition-hide="rotate"
-  >
+  <q-dialog v-model="openDialog" transition-show="rotate" transition-hide="rotate">
     <q-card>
       <q-form @submit="add">
         <q-card-section>
@@ -31,9 +27,7 @@
                 <q-item-section>
                   <q-item-label>{{ scope.opt.label }}</q-item-label>
                   <q-item-label caption>{{ scope.opt.fullName }}</q-item-label>
-                  <q-item-label caption>{{
-                    scope.opt.description
-                  }}</q-item-label>
+                  <q-item-label caption>{{ scope.opt.description }}</q-item-label>
                 </q-item-section>
               </q-item>
             </template>
@@ -44,7 +38,7 @@
             map-options
             option-value="value"
             :options="securities"
-            label="EasySecurity"
+            label="Security"
             class="q-pa-sm"
             options-selected-class="text-deep-blue"
           >
@@ -56,9 +50,7 @@
                 <q-item-section>
                   <q-item-label>{{ scope.opt.label }}</q-item-label>
                   <q-item-label caption>{{ scope.opt.fullName }}</q-item-label>
-                  <q-item-label caption>{{
-                    scope.opt.description
-                  }}</q-item-label>
+                  <q-item-label caption>{{ scope.opt.description }}</q-item-label>
                 </q-item-section>
               </q-item>
             </template>
@@ -81,9 +73,7 @@
                 <q-item-section>
                   <q-item-label>{{ scope.opt.label }}</q-item-label>
                   <q-item-label caption>{{ scope.opt.fullName }}</q-item-label>
-                  <q-item-label caption>{{
-                    scope.opt.description
-                  }}</q-item-label>
+                  <q-item-label caption>{{ scope.opt.description }}</q-item-label>
                 </q-item-section>
               </q-item>
             </template>
@@ -95,7 +85,7 @@
             map-options
             option-value="value"
             :options="precisions"
-            label="EasyPrecision"
+            label="Precision"
             class="q-pa-sm"
             options-selected-class="text-deep-blue"
           >
@@ -107,9 +97,7 @@
                 <q-item-section>
                   <q-item-label>{{ scope.opt.label }}</q-item-label>
                   <q-item-label caption>{{ scope.opt.fullName }}</q-item-label>
-                  <q-item-label caption>{{
-                    scope.opt.description
-                  }}</q-item-label>
+                  <q-item-label caption>{{ scope.opt.description }}</q-item-label>
                 </q-item-section>
               </q-item>
             </template>
@@ -140,8 +128,7 @@ export default defineComponent({
   components: {},
   setup() {
     const playgroundStore = usePlaygroundStore();
-    const { homomorphicSchemes, openDialog, schemeID } =
-      storeToRefs(playgroundStore);
+    const { homomorphicSchemes, openDialog, schemeID } = storeToRefs(playgroundStore);
     const schemes = [
       {
         label: 'BFV',

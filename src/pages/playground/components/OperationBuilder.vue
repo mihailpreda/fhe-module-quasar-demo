@@ -59,6 +59,7 @@
                 v-model="operation.operator"
                 :options="operationsSigns"
                 label="Operator"
+                :disable="encOperation.isComputed"
               ></q-select>
 
               <q-input
@@ -97,6 +98,7 @@
                     v-model="operation.result"
                     :readonly="encOperation.isComputed"
                     label="Result"
+                    input-class="ellipsis"
                   ></q-input>
                 </div>
               </Transition>
@@ -110,6 +112,7 @@
                   type="text"
                   v-model="operation.result"
                   label="Result"
+                  input-class="ellipsis"
                 ></q-input>
               </div>
             </div>
@@ -124,6 +127,7 @@
                     v-model="encOperation.leftSide.value"
                     readonly
                     label="Left parameter"
+                    input-class="ellipsis"
                   ></q-input>
                   <q-select
                     bg-color="white"
@@ -143,6 +147,7 @@
                     v-model="encOperation.rightSide.value"
                     label="Right parameter"
                     readonly
+                    input-class="ellipsis"
                   ></q-input>
                   <q-input
                     style="width: 50px"
@@ -163,6 +168,7 @@
                     v-model="encOperation.result"
                     readonly
                     label="Result"
+                    input-class="ellipsis"
                   ></q-input>
                 </div>
               </div>

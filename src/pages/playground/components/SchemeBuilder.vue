@@ -15,7 +15,7 @@
                 <q-item-section class="icon-avatar" avatar>
                   <q-icon color="white" name="mdi-shield-lock"></q-icon>
                 </q-item-section>
-                <q-item-section>EasySecurity: {{ scheme.security.label }}</q-item-section>
+                <q-item-section>Security: {{ scheme.security.label }}</q-item-section>
               </q-item>
 
               <q-item>
@@ -30,9 +30,7 @@
                 <q-item-section class="icon-avatar" avatar>
                   <q-icon color="white" name="mdi-chevron-double-up"></q-icon>
                 </q-item-section>
-                <q-item-section
-                  >EasyPrecision: {{ scheme.precision.label }}</q-item-section
-                >
+                <q-item-section>Precision: {{ scheme.precision.label }}</q-item-section>
               </q-item>
             </q-list>
           </div>
